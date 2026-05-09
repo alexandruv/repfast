@@ -1,0 +1,1124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RepFast is a product pitch for a dark gym-mode strength tracker built around sub-10-second logging and instant workout comparison.">
+  <title>RepFast | Log faster. Compare instantly.</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050708;
+      --bg-2: #091015;
+      --surface: #0c141a;
+      --surface-2: #111c23;
+      --line: #22323b;
+      --line-strong: #314751;
+      --text: #f2fbfb;
+      --muted: #9aadB4;
+      --dim: #71858d;
+      --cyan: #24e6d0;
+      --cyan-2: #10b8c7;
+      --green: #37ee8a;
+      --amber: #f5b84b;
+      --red: #ff6b6b;
+      --shadow: 0 30px 90px rgba(0, 0, 0, .45);
+      --radius: 8px;
+      --max: 1180px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 18% 0%, rgba(36, 230, 208, .16), transparent 34rem),
+        radial-gradient(circle at 80% 12%, rgba(55, 238, 138, .09), transparent 27rem),
+        linear-gradient(180deg, #071014 0%, var(--bg) 44%, #06090b 100%);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    img, svg {
+      max-width: 100%;
+      display: block;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--amber);
+      outline-offset: 4px;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      border-bottom: 1px solid rgba(49, 71, 81, .5);
+      background: rgba(5, 7, 8, .78);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      width: min(100% - 32px, var(--max));
+      min-height: 64px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 44px;
+      text-decoration: none;
+      font-weight: 900;
+      letter-spacing: 0;
+    }
+
+    .brand-mark {
+      width: 34px;
+      height: 34px;
+      border: 1px solid rgba(36, 230, 208, .55);
+      border-radius: 8px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, rgba(36, 230, 208, .16), rgba(55, 238, 138, .07));
+      box-shadow: 0 0 24px rgba(36, 230, 208, .18);
+    }
+
+    .nav-links {
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-links a,
+    .btn {
+      min-height: 44px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+      border-radius: var(--radius);
+      text-decoration: none;
+      font-weight: 800;
+      white-space: nowrap;
+      touch-action: manipulation;
+    }
+
+    .nav-links a {
+      padding: 0 12px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .nav-links a:hover {
+      color: var(--text);
+      background: rgba(255, 255, 255, .05);
+    }
+
+    .btn {
+      border: 1px solid rgba(36, 230, 208, .55);
+      padding: 0 16px;
+      background: var(--cyan);
+      color: #021012;
+      box-shadow: 0 18px 42px rgba(36, 230, 208, .16);
+    }
+
+    .btn.secondary {
+      background: rgba(255, 255, 255, .04);
+      color: var(--text);
+      border-color: var(--line-strong);
+      box-shadow: none;
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    section {
+      padding: 72px 0;
+    }
+
+    .wrap {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .hero {
+      padding: 54px 0 80px;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 34px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      margin: 0 0 16px;
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 720px;
+      margin-bottom: 20px;
+      font-size: clamp(44px, 8vw, 86px);
+      line-height: .95;
+      letter-spacing: 0;
+    }
+
+    h2 {
+      max-width: 780px;
+      margin-bottom: 18px;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 21px;
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .lead {
+      max-width: 670px;
+      color: #c3d2d7;
+      font-size: clamp(18px, 2vw, 22px);
+      line-height: 1.45;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 30px 0;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      max-width: 590px;
+    }
+
+    .metric {
+      min-height: 96px;
+      padding: 16px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(12, 20, 26, .76);
+    }
+
+    .metric strong {
+      display: block;
+      color: var(--text);
+      font-size: clamp(24px, 6vw, 38px);
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--dim);
+      font-size: 13px;
+      line-height: 1.25;
+    }
+
+    .hero-visual {
+      position: relative;
+      min-height: 420px;
+    }
+
+    .hero-visual img {
+      width: 100%;
+      min-height: 380px;
+      object-fit: cover;
+      border: 1px solid var(--line-strong);
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+    }
+
+    .floating-proof {
+      position: absolute;
+      left: 16px;
+      right: 16px;
+      bottom: 16px;
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 72px;
+      padding: 12px;
+      border: 1px solid rgba(55, 238, 138, .38);
+      border-radius: var(--radius);
+      background: rgba(5, 10, 12, .88);
+      box-shadow: 0 18px 50px rgba(0, 0, 0, .42);
+      backdrop-filter: blur(16px);
+    }
+
+    .proof-dot {
+      width: 44px;
+      height: 44px;
+      display: grid;
+      place-items: center;
+      border-radius: 8px;
+      background: rgba(55, 238, 138, .12);
+      color: var(--green);
+    }
+
+    .floating-proof strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    .floating-proof span {
+      display: block;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .proof-value {
+      color: var(--green);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .section-intro {
+      display: grid;
+      gap: 14px;
+      margin-bottom: 34px;
+    }
+
+    .section-intro p {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .problem-grid,
+    .roadmap-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .card {
+      min-height: 100%;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: linear-gradient(180deg, rgba(17, 28, 35, .92), rgba(10, 18, 23, .9));
+    }
+
+    .card p {
+      color: var(--muted);
+      margin-bottom: 0;
+    }
+
+    .icon-box {
+      width: 48px;
+      height: 48px;
+      display: grid;
+      place-items: center;
+      margin-bottom: 20px;
+      color: var(--cyan);
+      border: 1px solid rgba(36, 230, 208, .35);
+      border-radius: var(--radius);
+      background: rgba(36, 230, 208, .08);
+    }
+
+    .loop {
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(90deg, rgba(36, 230, 208, .06), rgba(55, 238, 138, .03), rgba(245, 184, 75, .05));
+    }
+
+    .loop-grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .loop-step {
+      position: relative;
+      min-height: 164px;
+      padding: 24px;
+      border: 1px solid rgba(49, 71, 81, .85);
+      border-radius: var(--radius);
+      background: rgba(5, 9, 11, .72);
+    }
+
+    .loop-step .num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 44px;
+      margin-bottom: 22px;
+      border-radius: 8px;
+      background: var(--cyan);
+      color: #041113;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .scenario {
+      display: grid;
+      gap: 30px;
+      align-items: center;
+    }
+
+    .scenario-copy {
+      max-width: 650px;
+    }
+
+    .scenario-copy p {
+      color: var(--muted);
+      font-size: 18px;
+    }
+
+    .scenario-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 26px;
+    }
+
+    .scenario-list div {
+      display: grid;
+      grid-template-columns: 44px 1fr;
+      gap: 12px;
+      align-items: center;
+      min-height: 56px;
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: rgba(12, 20, 26, .72);
+      color: #d8e5e8;
+    }
+
+    .scenario-list svg {
+      color: var(--cyan);
+      justify-self: center;
+    }
+
+    .comparison {
+      padding: 24px;
+      border: 1px solid rgba(55, 238, 138, .34);
+      border-radius: var(--radius);
+      background: #08100d;
+      box-shadow: var(--shadow);
+    }
+
+    .comparison-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: start;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(55, 238, 138, .18);
+    }
+
+    .comparison-head span {
+      color: var(--green);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .comparison-head strong {
+      display: block;
+      margin-top: 6px;
+      font-size: 34px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .comparison-grid {
+      display: grid;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .compare-stat {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 64px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .07);
+    }
+
+    .compare-stat:last-child {
+      border-bottom: 0;
+    }
+
+    .compare-stat span {
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .compare-stat strong {
+      color: var(--text);
+      font-size: 22px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .tag {
+      min-height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 10px;
+      border: 1px solid rgba(245, 184, 75, .48);
+      border-radius: 8px;
+      color: var(--amber);
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .takeaway {
+      margin: 18px 0 0;
+      padding: 16px;
+      border-radius: var(--radius);
+      background: rgba(55, 238, 138, .1);
+      color: #dcffeb;
+    }
+
+    .screens {
+      display: grid;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .phone {
+      width: min(100%, 340px);
+      margin: 0 auto;
+      padding: 14px;
+      border: 1px solid #2b3e48;
+      border-radius: 34px;
+      background: linear-gradient(145deg, #1a242b, #05080a);
+      box-shadow: var(--shadow);
+    }
+
+    .screen {
+      min-height: 610px;
+      padding: 22px;
+      border: 1px solid #243740;
+      border-radius: 24px;
+      background: linear-gradient(180deg, #111d24, #06090b);
+    }
+
+    .screen-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 24px;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .big-label {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .control {
+      display: grid;
+      grid-template-columns: 1fr 56px 56px;
+      gap: 10px;
+      align-items: center;
+      min-height: 98px;
+      margin-top: 12px;
+      padding: 12px;
+      border: 1px solid #21333c;
+      border-radius: var(--radius);
+      background: #0b1419;
+    }
+
+    .control strong {
+      font-size: 42px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .control span {
+      color: var(--cyan);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    .stepper {
+      min-width: 56px;
+      min-height: 56px;
+      border: 0;
+      border-radius: 8px;
+      background: #162832;
+      color: var(--text);
+      font-size: 28px;
+      font-weight: 900;
+    }
+
+    .log-button {
+      width: 100%;
+      min-height: 64px;
+      margin-top: 18px;
+      border: 0;
+      border-radius: var(--radius);
+      background: var(--cyan);
+      color: #021012;
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .mini-note {
+      margin-top: 18px;
+      padding: 14px;
+      border-radius: var(--radius);
+      background: rgba(36, 230, 208, .08);
+      color: #c7fffa;
+      font-size: 14px;
+    }
+
+    .timer-ring {
+      width: min(100%, 246px);
+      aspect-ratio: 1;
+      margin: 34px auto 26px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, #071014 58%, transparent 59%),
+        conic-gradient(var(--green) 0 73%, rgba(255, 255, 255, .1) 73% 100%);
+      box-shadow: inset 0 0 44px rgba(55, 238, 138, .1);
+    }
+
+    .timer-ring strong {
+      font-size: 54px;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .timer-ring span {
+      display: block;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .quiet-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 52px;
+      padding: 12px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      color: var(--muted);
+    }
+
+    .summary-bars {
+      display: grid;
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .bar {
+      display: grid;
+      gap: 8px;
+    }
+
+    .bar span {
+      display: flex;
+      justify-content: space-between;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+
+    .bar i {
+      display: block;
+      height: 12px;
+      border-radius: 8px;
+      background: #15252d;
+      overflow: hidden;
+    }
+
+    .bar i::before {
+      content: "";
+      display: block;
+      width: var(--w);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--green), var(--cyan));
+    }
+
+    .roadmap-item {
+      display: grid;
+      gap: 12px;
+      padding: 22px 0;
+      border-top: 1px solid var(--line);
+    }
+
+    .roadmap-item strong {
+      color: var(--text);
+      font-size: 20px;
+    }
+
+    .roadmap-item p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .roadmap-item span {
+      color: var(--cyan);
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .closing {
+      padding-bottom: 52px;
+      text-align: center;
+    }
+
+    .closing .wrap {
+      max-width: 820px;
+    }
+
+    .closing p {
+      color: var(--muted);
+      font-size: 20px;
+    }
+
+    .footer {
+      border-top: 1px solid var(--line);
+      padding: 28px 0;
+      color: var(--dim);
+      font-size: 14px;
+    }
+
+    @media (min-width: 680px) {
+      .problem-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .loop-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .comparison-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .compare-stat:nth-last-child(2) {
+        border-bottom: 0;
+      }
+    }
+
+    @media (min-width: 768px) {
+      .nav-links {
+        display: flex;
+      }
+
+      section {
+        padding: 96px 0;
+      }
+
+      .hero-grid,
+      .scenario {
+        grid-template-columns: 1fr .9fr;
+      }
+
+      .screens {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .phone {
+        width: 100%;
+      }
+
+      .screen {
+        min-height: 620px;
+      }
+
+      .roadmap-grid {
+        grid-template-columns: .7fr 1.3fr;
+        gap: 42px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .hero {
+        padding-top: 72px;
+      }
+
+      .hero-grid {
+        grid-template-columns: .95fr 1.05fr;
+        gap: 56px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .floating-proof {
+        grid-template-columns: 44px 1fr;
+      }
+
+      .proof-value {
+        grid-column: 2;
+      }
+
+      .comparison-head {
+        display: block;
+      }
+
+      .tag {
+        margin-top: 14px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="#top" aria-label="RepFast home">
+        <span class="brand-mark" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <path d="M4 7h16M7 4v16M17 4v16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        </span>
+        RepFast
+      </a>
+      <div class="nav-links">
+        <a href="#problem">Problem</a>
+        <a href="#loop">10-second loop</a>
+        <a href="#v1">V1 design</a>
+        <a href="#roadmap">Roadmap</a>
+      </div>
+      <a class="btn secondary" href="#pitch">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Pitch
+      </a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero" id="pitch">
+      <div class="wrap hero-grid">
+        <div>
+          <p class="eyebrow">Offline strength tracking concept</p>
+          <h1>Faster than a notebook, smarter than a spreadsheet.</h1>
+          <p class="lead">RepFast is a dark gym-mode logger built around one promise: log a set in under 10 seconds, then instantly see what changed since last time.</p>
+          <div class="hero-actions" aria-label="Pitch shortcuts">
+            <a class="btn" href="#v1">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <rect x="7" y="2.8" width="10" height="18.4" rx="2.4" stroke="currentColor" stroke-width="2.2"/>
+                <path d="M10 18h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              See V1 screens
+            </a>
+            <a class="btn secondary" href="#scenario">
+              <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Gym-floor scenario
+            </a>
+          </div>
+          <div class="stats-row" aria-label="RepFast pitch metrics">
+            <div class="metric"><strong>&lt;10s</strong><span>Target set logging loop</span></div>
+            <div class="metric"><strong>0</strong><span>Signup screens in V1</span></div>
+            <div class="metric"><strong>1 hand</strong><span>Oversized controls for shaky sets</span></div>
+          </div>
+        </div>
+        <div class="hero-visual" aria-label="RepFast product visual">
+          <img src="assets/repfast-hero-ai.png" width="2048" height="1152" alt="Dark gym product visual with a phone showing a RepFast-style workout logger beside a barbell.">
+          <div class="floating-proof">
+            <span class="proof-dot" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <span><strong>Last session remembered</strong><span>225 lb × 5 prefilled for the next heavy set</span></span>
+            <span class="proof-value">+8%</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem">
+      <div class="wrap">
+        <div class="section-intro">
+          <p class="eyebrow">The gap</p>
+          <h2>Most workout apps ask too much from someone under a bar.</h2>
+          <p>RepFast is not a social feed, coaching platform, ad surface, or cloud dashboard. It is a lean gym-floor tool for the moment when the lifter has shaky hands, poor signal, and a rest clock already running.</p>
+        </div>
+        <div class="problem-grid">
+          <article class="card">
+            <span class="icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M4 6h16M4 12h10M4 18h7" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <h3>Too many screens</h3>
+            <p>Menus, workout builders, feeds, and prompts get between the user and the only thing they need to capture: weight and reps.</p>
+          </article>
+          <article class="card">
+            <span class="icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M6 18 18 6M8 6h10v10" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 12a8 8 0 0 1 8-8M20 12a8 8 0 0 1-8 8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <h3>Signal-dependent</h3>
+            <p>A gym basement should never break the log. V1 stores workouts locally and avoids mandatory cloud sync.</p>
+          </article>
+          <article class="card">
+            <span class="icon-box" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M6 12h12M12 6v12" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+                <path d="M4 4h16v16H4z" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round"/>
+              </svg>
+            </span>
+            <h3>Spreadsheet thinking</h3>
+            <p>Raw history is useful later. During a session, the app should answer one question fast: did this beat last time?</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="loop" id="loop">
+      <div class="wrap">
+        <div class="section-intro">
+          <p class="eyebrow">Product idea</p>
+          <h2>The 10-second log loop.</h2>
+          <p>Open, lift, log, compare. RepFast remembers the last values, keeps controls oversized, starts rest automatically, and translates the session into a plain-English performance card.</p>
+        </div>
+        <div class="loop-grid">
+          <article class="loop-step">
+            <span class="num">1</span>
+            <h3>Open to active lift</h3>
+            <p>No home feed. No signup wall. The next planned exercise is already on screen.</p>
+          </article>
+          <article class="loop-step">
+            <span class="num">2</span>
+            <h3>Confirm defaults</h3>
+            <p>Weight and reps prefill from the previous time. Most sets need one tap.</p>
+          </article>
+          <article class="loop-step">
+            <span class="num">3</span>
+            <h3>Start rest timer</h3>
+            <p>Logging a set immediately starts the rest clock and keeps the next action visible.</p>
+          </article>
+          <article class="loop-step">
+            <span class="num">4</span>
+            <h3>Compare instantly</h3>
+            <p>The payoff is not a chart hunt. It is a simple “today vs last time” answer.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="scenario">
+      <div class="wrap scenario">
+        <div class="scenario-copy">
+          <p class="eyebrow">Real gym moment</p>
+          <h2>Heavy bench set. Chalky hands. Bad signal. Twenty seconds before the next decision.</h2>
+          <p>The lifter racks 225 after a hard sixth rep. They are breathing, their hands are shaky, and the bench is not theirs for long. RepFast opens straight to Bench Press, shows 225 × 5 from the last session, lets them bump reps to 6 with one thumb, and immediately says volume is up.</p>
+          <div class="scenario-list">
+            <div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M7 11h10M5 8v6M19 8v6M3 10v2M21 10v2" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              One-handed logging with 56px controls.
+            </div>
+            <div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M5 12a7 7 0 0 1 14 0M8 15a4 4 0 0 1 8 0M12 19h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+                <path d="M4 4 20 20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              Offline-first storage when gym Wi-Fi disappears.
+            </div>
+            <div>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="m4 16 5-5 4 4 7-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 20h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+              </svg>
+              Instant comparison before the next load choice.
+            </div>
+          </div>
+        </div>
+        <aside class="comparison" aria-label="Today versus last time performance card">
+          <div class="comparison-head">
+            <div>
+              <span>Today vs last time</span>
+              <strong>Bench Press</strong>
+            </div>
+            <span class="tag">PR marker</span>
+          </div>
+          <div class="comparison-grid">
+            <div class="compare-stat"><span>Session volume</span><strong>+8%</strong></div>
+            <div class="compare-stat"><span>Best set</span><strong>225 × 6</strong></div>
+            <div class="compare-stat"><span>Estimated 1RM</span><strong>270 lb</strong></div>
+            <div class="compare-stat"><span>Rest consistency</span><strong>2:05 avg</strong></div>
+          </div>
+          <p class="takeaway">You matched last session’s top weight and added one rep. Keep the same load next set unless speed drops.</p>
+        </aside>
+      </div>
+    </section>
+
+    <section id="v1">
+      <div class="wrap">
+        <div class="section-intro">
+          <p class="eyebrow">First-version mobile app</p>
+          <h2>Dark Gym Mode, built for low light and tired hands.</h2>
+          <p>V1 stays intentionally narrow: offline workout logging, previous-set defaults, oversized weight and rep controls, auto-rest timing, and the performance card.</p>
+        </div>
+        <div class="screens" aria-label="Three RepFast mobile screen mockups">
+          <article class="phone">
+            <div class="screen">
+              <div class="screen-top"><span>RepFast</span><span>Set 4/5</span></div>
+              <h3>Bench Press</h3>
+              <p class="big-label">Weight</p>
+              <div class="control">
+                <div><strong>225</strong> <span>lb</span></div>
+                <button class="stepper" type="button" aria-label="Decrease weight">−</button>
+                <button class="stepper" type="button" aria-label="Increase weight">+</button>
+              </div>
+              <p class="big-label" style="margin-top: 18px;">Reps</p>
+              <div class="control">
+                <div><strong>6</strong></div>
+                <button class="stepper" type="button" aria-label="Decrease reps">−</button>
+                <button class="stepper" type="button" aria-label="Increase reps">+</button>
+              </div>
+              <button class="log-button" type="button">LOG SET</button>
+              <p class="mini-note">Previous: 225 × 5. Defaults loaded locally.</p>
+            </div>
+          </article>
+          <article class="phone">
+            <div class="screen">
+              <div class="screen-top"><span>Rest timer</span><span>Next set</span></div>
+              <h3>Rest before set 5</h3>
+              <div class="timer-ring">
+                <div><strong>1:22</strong><span>remaining</span></div>
+              </div>
+              <div class="quiet-row"><span>Target rest</span><strong>2:30</strong></div>
+              <div class="quiet-row"><span>Next weight</span><strong>225 lb</strong></div>
+              <div class="quiet-row"><span>Last top set</span><strong>225 × 5</strong></div>
+              <p class="mini-note">Timer starts automatically when the set is logged.</p>
+            </div>
+          </article>
+          <article class="phone">
+            <div class="screen">
+              <div class="screen-top"><span>Summary</span><span>Offline</span></div>
+              <h3>Today moved forward.</h3>
+              <div class="comparison-head" style="border-bottom: 0; padding-bottom: 8px;">
+                <div>
+                  <span>Volume delta</span>
+                  <strong style="color: var(--green);">+8%</strong>
+                </div>
+              </div>
+              <div class="summary-bars">
+                <div class="bar" style="--w: 82%;"><span><b>Bench</b><b>+8%</b></span><i></i></div>
+                <div class="bar" style="--w: 66%;"><span><b>Rows</b><b>+3%</b></span><i></i></div>
+                <div class="bar" style="--w: 72%;"><span><b>Press</b><b>+5%</b></span><i></i></div>
+              </div>
+              <p class="takeaway">Best set improved. Total session volume is up without adding extra exercises.</p>
+              <span class="tag">New bench PR</span>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="wrap roadmap-grid">
+        <div>
+          <p class="eyebrow">Roadmap</p>
+          <h2>MVP first. Power later.</h2>
+        </div>
+        <div>
+          <div class="roadmap-item">
+            <span>01</span>
+            <strong>Offline MVP</strong>
+            <p>Local workout history, exercise list, previous-set defaults, log button, auto-rest timer, and today-vs-last-time card.</p>
+          </div>
+          <div class="roadmap-item">
+            <span>02</span>
+            <strong>Optional sync</strong>
+            <p>Cloud backup becomes opt-in after the core loop is trusted. The gym-floor experience remains offline-capable.</p>
+          </div>
+          <div class="roadmap-item">
+            <span>03</span>
+            <strong>Lift utilities</strong>
+            <p>Plate calculator, optional RPE, and simple progression prompts that do not clutter the logging screen.</p>
+          </div>
+          <div class="roadmap-item">
+            <span>04</span>
+            <strong>Wearable and voice logging</strong>
+            <p>Later input modes for chalky hands and phone-free sets, only after the manual loop is fast enough to beat paper.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="closing">
+      <div class="wrap">
+        <p class="eyebrow">Positioning</p>
+        <h2>RepFast is the anti-clutter strength tracker.</h2>
+        <p>No signup, no social feed, no coaching clutter. Open, lift, log, compare.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">RepFast product pitch concept. Built as a static stakeholder discussion page.</div>
+  </footer>
+</body>
+</html>

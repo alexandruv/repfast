@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 960" role="img" aria-labelledby="title desc">
+  <title id="title">RepFast product visual</title>
+  <desc id="desc">A dark gym scene with a phone showing a strength logging interface beside a loaded barbell.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#101820"/>
+      <stop offset=".52" stop-color="#071014"/>
+      <stop offset="1" stop-color="#030607"/>
+    </linearGradient>
+    <radialGradient id="cyanGlow" cx=".38" cy=".26" r=".58">
+      <stop offset="0" stop-color="#24e6d0" stop-opacity=".42"/>
+      <stop offset=".48" stop-color="#24e6d0" stop-opacity=".08"/>
+      <stop offset="1" stop-color="#24e6d0" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="greenGlow" cx=".7" cy=".82" r=".5">
+      <stop offset="0" stop-color="#38f28a" stop-opacity=".25"/>
+      <stop offset=".48" stop-color="#38f28a" stop-opacity=".06"/>
+      <stop offset="1" stop-color="#38f28a" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="phone" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#1d2934"/>
+      <stop offset=".38" stop-color="#0d151b"/>
+      <stop offset="1" stop-color="#030608"/>
+    </linearGradient>
+    <linearGradient id="screen" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#111d27"/>
+      <stop offset="1" stop-color="#05090c"/>
+    </linearGradient>
+    <filter id="shadow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="40" stdDeviation="46" flood-color="#000" flood-opacity=".6"/>
+    </filter>
+    <filter id="soft" x="-25%" y="-25%" width="150%" height="150%">
+      <feGaussianBlur stdDeviation="12"/>
+    </filter>
+  </defs>
+  <rect width="1600" height="960" fill="url(#bg)"/>
+  <rect width="1600" height="960" fill="url(#cyanGlow)"/>
+  <rect width="1600" height="960" fill="url(#greenGlow)"/>
+  <path d="M0 678c220-37 420-44 600-19 190 27 345 28 502 0 190-34 356-33 498 5v296H0Z" fill="#091116"/>
+  <g opacity=".28">
+    <path d="M0 787h1600M0 852h1600M0 917h1600" stroke="#31414a" stroke-width="2"/>
+    <path d="M128 710l-58 250M348 695l-39 265M568 683l-18 277M789 679l5 281M1008 685l30 275M1228 699l55 261M1448 718l84 242" stroke="#22323a" stroke-width="2"/>
+  </g>
+  <g transform="translate(126 548) rotate(-5)" opacity=".9">
+    <rect x="0" y="76" width="820" height="32" rx="16" fill="#1f2b32"/>
+    <rect x="-18" y="45" width="76" height="94" rx="14" fill="#11191f"/>
+    <rect x="62" y="34" width="64" height="116" rx="14" fill="#172128"/>
+    <rect x="704" y="34" width="64" height="116" rx="14" fill="#172128"/>
+    <rect x="772" y="45" width="76" height="94" rx="14" fill="#11191f"/>
+    <circle cx="408" cy="92" r="38" fill="#10181e"/>
+  </g>
+  <g transform="translate(910 112) rotate(7)" filter="url(#shadow)">
+    <rect x="0" y="0" width="390" height="700" rx="58" fill="url(#phone)"/>
+    <rect x="25" y="28" width="340" height="644" rx="42" fill="url(#screen)" stroke="#27343d" stroke-width="2"/>
+    <rect x="141" y="15" width="108" height="14" rx="7" fill="#020405"/>
+    <text x="52" y="91" fill="#e6f7f6" font-family="Inter, Arial, sans-serif" font-size="26" font-weight="700">Bench Press</text>
+    <text x="52" y="124" fill="#6d8993" font-family="Inter, Arial, sans-serif" font-size="15">Set 4 of 5</text>
+    <g transform="translate(52 153)">
+      <rect width="286" height="82" rx="22" fill="#0c171d" stroke="#1c3038"/>
+      <text x="24" y="32" fill="#7f99a1" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">WEIGHT</text>
+      <text x="24" y="66" fill="#f4fbfb" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800">225</text>
+      <text x="113" y="66" fill="#24e6d0" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="700">lb</text>
+      <rect x="190" y="18" width="36" height="46" rx="14" fill="#142630"/>
+      <rect x="236" y="18" width="36" height="46" rx="14" fill="#17302b"/>
+      <path d="M203 41h10M208 36v10M248 41h12" stroke="#dffdf8" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(52 253)">
+      <rect width="286" height="82" rx="22" fill="#0c171d" stroke="#1c3038"/>
+      <text x="24" y="32" fill="#7f99a1" font-family="Inter, Arial, sans-serif" font-size="14" font-weight="700">REPS</text>
+      <text x="24" y="66" fill="#f4fbfb" font-family="Inter, Arial, sans-serif" font-size="42" font-weight="800">6</text>
+      <rect x="190" y="18" width="36" height="46" rx="14" fill="#142630"/>
+      <rect x="236" y="18" width="36" height="46" rx="14" fill="#17302b"/>
+      <path d="M203 41h10M208 36v10M248 41h12" stroke="#dffdf8" stroke-width="4" stroke-linecap="round"/>
+    </g>
+    <g transform="translate(52 368)">
+      <rect width="286" height="70" rx="22" fill="#24e6d0"/>
+      <text x="143" y="45" text-anchor="middle" fill="#021012" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="900">LOG SET</text>
+    </g>
+    <g transform="translate(52 470)">
+      <rect width="286" height="120" rx="26" fill="#0b151a" stroke="#28413b"/>
+      <text x="24" y="35" fill="#38f28a" font-family="Inter, Arial, sans-serif" font-size="15" font-weight="800">TODAY VS LAST</text>
+      <text x="24" y="78" fill="#f5fffb" font-family="Inter, Arial, sans-serif" font-size="40" font-weight="900">+8%</text>
+      <text x="112" y="76" fill="#9db1b7" font-family="Inter, Arial, sans-serif" font-size="15">more volume</text>
+      <path d="M208 76l23-24 18 17 30-39" fill="none" stroke="#38f28a" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <g transform="translate(207 142)">
+    <rect x="0" y="0" width="496" height="336" rx="38" fill="#0a1318" stroke="#22343c"/>
+    <rect x="36" y="42" width="148" height="16" rx="8" fill="#24e6d0"/>
+    <rect x="36" y="82" width="370" height="20" rx="10" fill="#46565e" opacity=".65"/>
+    <rect x="36" y="118" width="300" height="20" rx="10" fill="#31414a" opacity=".7"/>
+    <g transform="translate(36 180)">
+      <rect width="128" height="96" rx="20" fill="#101d24"/>
+      <rect x="24" y="24" width="64" height="12" rx="6" fill="#6f8790"/>
+      <rect x="24" y="50" width="82" height="22" rx="11" fill="#38f28a"/>
+    </g>
+    <g transform="translate(184 180)">
+      <rect width="128" height="96" rx="20" fill="#101d24"/>
+      <circle cx="46" cy="49" r="24" fill="none" stroke="#24e6d0" stroke-width="10"/>
+      <rect x="78" y="39" width="28" height="20" rx="10" fill="#6f8790"/>
+    </g>
+    <g transform="translate(332 180)">
+      <rect width="128" height="96" rx="20" fill="#101d24"/>
+      <path d="M25 65h18l18-34 18 48 18-28h20" fill="none" stroke="#f8b84e" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+  <circle cx="780" cy="214" r="5" fill="#24e6d0" opacity=".7"/>
+  <circle cx="1363" cy="612" r="4" fill="#38f28a" opacity=".8"/>
+  <circle cx="734" cy="623" r="4" fill="#f8b84e" opacity=".8"/>
+</svg>
