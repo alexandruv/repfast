@@ -39,6 +39,7 @@ class _RepositoryLoadedHome extends StatefulWidget {
 
 class _RepositoryLoadedHomeState extends State<_RepositoryLoadedHome> {
   late Future<ActiveWorkoutController> _controller;
+  SqliteWorkoutRepository? _repository;
 
   @override
   void initState() {
@@ -48,6 +49,12 @@ class _RepositoryLoadedHomeState extends State<_RepositoryLoadedHome> {
 
   Future<ActiveWorkoutController> _openController() async {
     final repository = await widget.repositoryLoader();
+    if (!mounted) {
+      await repository.close();
+      throw StateError('RepFast shell disposed before storage opened.');
+    }
+    await _repository?.close();
+    _repository = repository;
     return ActiveWorkoutController(repository: repository);
   }
 
@@ -55,6 +62,12 @@ class _RepositoryLoadedHomeState extends State<_RepositoryLoadedHome> {
     setState(() {
       _controller = _openController();
     });
+  }
+
+  @override
+  void dispose() {
+    _repository?.close();
+    super.dispose();
   }
 
   @override
@@ -102,28 +115,35 @@ class _ShellMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  title,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.titleLarge,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: ConstrainedBox(
+                constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                child: Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        title,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        detail,
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      const SizedBox(height: 18),
+                      action,
+                    ],
+                  ),
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  detail,
-                  textAlign: TextAlign.center,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 18),
-                action,
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         ),
       ),
     );

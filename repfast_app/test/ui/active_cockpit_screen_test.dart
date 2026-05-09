@@ -1,3 +1,4 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:repfast_app/src/application/active_workout_controller.dart';
 import 'package:repfast_app/src/data/sqlite_workout_repository.dart';
@@ -37,8 +38,12 @@ void main() {
     expect(find.text('Set 1'), findsOneWidget);
     expect(find.text('225'), findsOneWidget);
     expect(find.text('5'), findsOneWidget);
-    expect(find.text('Log set'), findsOneWidget);
+    expect(find.text('LOG SET'), findsOneWidget);
     expect(find.text('Today vs last time'), findsOneWidget);
+    expect(
+      find.text('No signup. No signal. Open, lift, log, compare.'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('weight and reps controls update values', (tester) async {
@@ -64,13 +69,15 @@ void main() {
     await tester.pumpUntilFound(find.text('Bench Press'));
     await tester.tap(find.bySemanticsLabel('Increase reps'));
     await tester.pump();
-    await tester.tap(find.text('Log set'));
-    await tester.runAsync(() async {
-      await Future<void>.delayed(const Duration(milliseconds: 50));
-    });
-    await tester.pump();
+    await tester.ensureVisible(find.text('LOG SET'));
+    await tester.tap(find.text('LOG SET'));
+    await tester.waitForSetIndex(controller, 2);
+    await tester.pumpUntilFound(find.text('Set 2'));
 
     expect(find.text('Set 2'), findsOneWidget);
+    expect(controller.state.isResting, isTrue);
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 500));
+    await tester.pumpUntilFound(find.text('Rest started'));
     expect(find.text('Rest started'), findsOneWidget);
     expect(find.textContaining('+'), findsWidgets);
     expect(find.text('You added one rep at the same weight.'), findsOneWidget);
@@ -86,5 +93,20 @@ extension on WidgetTester {
       }
     }
     expect(finder, findsOneWidget);
+  }
+
+  Future<void> waitForSetIndex(
+    ActiveWorkoutController controller,
+    int setIndex,
+  ) async {
+    await runAsync(() async {
+      for (var attempt = 0; attempt < 20; attempt += 1) {
+        if (controller.state.setIndex == setIndex) {
+          return;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
+    expect(controller.state.setIndex, setIndex);
   }
 }

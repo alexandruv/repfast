@@ -168,6 +168,11 @@ class _CockpitBody extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: textTheme.headlineMedium?.copyWith(fontSize: 34),
             ),
+            const SizedBox(height: 8),
+            Text(
+              'No signup. No signal. Open, lift, log, compare.',
+              style: textTheme.bodyMedium?.copyWith(height: 1.35),
+            ),
             const SizedBox(height: 10),
             Wrap(
               spacing: 10,
@@ -213,7 +218,7 @@ class _CockpitBody extends StatelessWidget {
                 ),
                 onPressed: state.isSaving ? null : onLogSet,
                 child: Text(
-                  state.isSaving ? 'Saving' : 'Log set',
+                  state.isSaving ? 'SAVING' : 'LOG SET',
                   style: const TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
@@ -233,13 +238,6 @@ class _CockpitBody extends StatelessWidget {
             ],
             const SizedBox(height: 18),
             ComparisonStrip(result: state.comparison),
-            if (!isShort) ...[
-              const SizedBox(height: 18),
-              Text(
-                'Open, lift, log, compare. No account, no signal, no clipboard between sets.',
-                style: textTheme.bodyMedium?.copyWith(height: 1.35),
-              ),
-            ],
           ],
         );
       },
@@ -331,28 +329,35 @@ class _LoadErrorState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              'Could not load workout.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.titleLarge,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: constraints.maxHeight),
+            child: Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    'Could not load workout.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Your log stays on this phone. Retry before your next set.',
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                  const SizedBox(height: 18),
+                  FilledButton(onPressed: onRetry, child: const Text('Retry')),
+                ],
+              ),
             ),
-            const SizedBox(height: 10),
-            Text(
-              'Your log stays on this phone. Retry before your next set.',
-              textAlign: TextAlign.center,
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 18),
-            FilledButton(onPressed: onRetry, child: const Text('Retry')),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }
