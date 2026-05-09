@@ -1,3 +1,5 @@
+import 'package:repfast_app/src/domain/calculators.dart';
+
 class Exercise {
   const Exercise({
     required this.id,
@@ -43,5 +45,5 @@ class WorkoutSet {
   final int reps;
   final DateTime completedAt;
 
-  double get volume => weight * reps;
+  double get volume => RepFastCalculators.volume(weight: weight, reps: reps);
 }
