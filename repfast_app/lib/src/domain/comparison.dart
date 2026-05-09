@@ -59,7 +59,8 @@ class WorkoutComparison {
       currentVolume: currentVolume,
       previousVolume: previousVolume,
       volumeDeltaPercent: delta,
-      isPersonalRecord: currentBestOrm > previousBestOrm,
+      isPersonalRecord:
+          bestPreviousSet != null && currentBestOrm > previousBestOrm,
       bestSet: bestCurrentSet,
       takeaway: _takeaway(bestCurrentSet, bestPreviousSet, previousVolume),
     );
@@ -80,6 +81,7 @@ class WorkoutComparison {
         weight: next.weight,
         reps: next.reps,
       );
+      if (nextOrm == bestOrm) return next.volume > best.volume ? next : best;
       return nextOrm > bestOrm ? next : best;
     });
   }
@@ -94,7 +96,10 @@ class WorkoutComparison {
       return 'First logged set for this lift.';
     }
     if (current.weight == previous.weight && current.reps > previous.reps) {
-      return 'You added one rep at the same weight.';
+      final addedReps = current.reps - previous.reps;
+      return addedReps == 1
+          ? 'You added one rep at the same weight.'
+          : 'You added $addedReps reps at the same weight.';
     }
     if (current.weight > previous.weight) {
       return 'You moved more weight than last time.';

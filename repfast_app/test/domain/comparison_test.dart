@@ -62,4 +62,43 @@ void main() {
     expect(result.isPersonalRecord, isTrue);
     expect(result.bestSet?.reps, 6);
   });
+
+  test('does not mark a PR for a first logged lift', () {
+    final result = WorkoutComparison.compare(
+      currentSets: [
+        set(id: 'new-1', sessionId: 'current', index: 1, weight: 225, reps: 6),
+      ],
+      previousSets: [],
+    );
+
+    expect(result.isPersonalRecord, isFalse);
+    expect(result.takeaway, 'First logged set for this lift.');
+  });
+
+  test('reports exact added reps at the same weight', () {
+    final result = WorkoutComparison.compare(
+      currentSets: [
+        set(id: 'new-1', sessionId: 'current', index: 1, weight: 225, reps: 7),
+      ],
+      previousSets: [
+        set(id: 'old-1', sessionId: 'previous', index: 1, weight: 225, reps: 5),
+      ],
+    );
+
+    expect(result.takeaway, 'You added 2 reps at the same weight.');
+  });
+
+  test('breaks estimated strength ties by higher volume', () {
+    final result = WorkoutComparison.compare(
+      currentSets: [
+        set(id: 'new-1', sessionId: 'current', index: 1, weight: 225, reps: 2),
+        set(id: 'new-2', sessionId: 'current', index: 2, weight: 200, reps: 6),
+      ],
+      previousSets: [
+        set(id: 'old-1', sessionId: 'previous', index: 1, weight: 135, reps: 5),
+      ],
+    );
+
+    expect(result.bestSet?.id, 'new-2');
+  });
 }
