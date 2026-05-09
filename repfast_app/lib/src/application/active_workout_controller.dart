@@ -162,6 +162,8 @@ class ActiveWorkoutController {
       return state;
     } catch (_) {
       _state = saving.copyWith(
+        setIndex: saving.setIndex + 1,
+        isResting: true,
         isSaving: false,
         saveError: 'Set saved. Refresh workout.',
       );

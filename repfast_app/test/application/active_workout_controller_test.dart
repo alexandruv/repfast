@@ -140,7 +140,26 @@ void main() {
 
       expect(repository.logCalls, 1);
       expect(state.isSaving, isFalse);
+      expect(state.isResting, isTrue);
+      expect(state.setIndex, 2);
       expect(state.saveError, 'Set saved. Refresh workout.');
+    },
+  );
+
+  test(
+    'refresh failure after successful save does not reuse set index on next log',
+    () async {
+      final repository = _RefreshFailingWorkoutRepository();
+      final controller = ActiveWorkoutController(repository: repository);
+      await controller.load();
+
+      await controller.logSet(now: DateTime(2026, 5, 9, 12));
+      repository.failRefresh = false;
+      final state = await controller.logSet(now: DateTime(2026, 5, 9, 12, 5));
+
+      expect(repository.savedSetIndexes, [1, 2]);
+      expect(state.setIndex, 3);
+      expect(state.saveError, isNull);
     },
   );
 }
@@ -240,6 +259,8 @@ class _DelayedWorkoutRepository extends _MemoryWorkoutRepository {
 
 class _RefreshFailingWorkoutRepository extends _MemoryWorkoutRepository {
   int logCalls = 0;
+  bool failRefresh = true;
+  final List<int> savedSetIndexes = [];
 
   @override
   Future<WorkoutSet> logSet({
@@ -251,6 +272,7 @@ class _RefreshFailingWorkoutRepository extends _MemoryWorkoutRepository {
     required DateTime completedAt,
   }) {
     logCalls += 1;
+    savedSetIndexes.add(setIndex);
     return super.logSet(
       sessionId: sessionId,
       exerciseId: exerciseId,
@@ -263,7 +285,7 @@ class _RefreshFailingWorkoutRepository extends _MemoryWorkoutRepository {
 
   @override
   Future<List<WorkoutSet>> currentSetsForExercise(String exerciseId) {
-    if (logCalls > 0) {
+    if (failRefresh && logCalls > 0) {
       throw Exception('refresh failed');
     }
     return super.currentSetsForExercise(exerciseId);
