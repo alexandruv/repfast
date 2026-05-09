@@ -10,6 +10,7 @@ class ActiveWorkoutState {
     required this.reps,
     required this.setIndex,
     required this.isResting,
+    required this.isSaving,
     required this.statusLabel,
     required this.comparison,
     this.saveError,
@@ -21,6 +22,7 @@ class ActiveWorkoutState {
   final int reps;
   final int setIndex;
   final bool isResting;
+  final bool isSaving;
   final String statusLabel;
   final WorkoutComparisonResult comparison;
   final String? saveError;
@@ -30,6 +32,7 @@ class ActiveWorkoutState {
     int? reps,
     int? setIndex,
     bool? isResting,
+    bool? isSaving,
     String? statusLabel,
     WorkoutComparisonResult? comparison,
     String? saveError,
@@ -42,6 +45,7 @@ class ActiveWorkoutState {
       reps: reps ?? this.reps,
       setIndex: setIndex ?? this.setIndex,
       isResting: isResting ?? this.isResting,
+      isSaving: isSaving ?? this.isSaving,
       statusLabel: statusLabel ?? this.statusLabel,
       comparison: comparison ?? this.comparison,
       saveError: clearSaveError ? null : saveError ?? this.saveError,
@@ -82,6 +86,7 @@ class ActiveWorkoutController {
       reps: previousDefault?.reps ?? _fallbackReps,
       setIndex: currentSets.length + 1,
       isResting: false,
+      isSaving: false,
       statusLabel: 'Saved on device',
       comparison: _compareAgainstPreviousDefault(
         currentSets: currentSets,
@@ -92,6 +97,9 @@ class ActiveWorkoutController {
   }
 
   ActiveWorkoutState updateWeight(double weight) {
+    if (state.isSaving) {
+      return state;
+    }
     _state = state.copyWith(
       weight: weight < 0 ? 0 : weight,
       clearSaveError: true,
@@ -100,32 +108,51 @@ class ActiveWorkoutController {
   }
 
   ActiveWorkoutState updateReps(int reps) {
+    if (state.isSaving) {
+      return state;
+    }
     _state = state.copyWith(reps: reps < 1 ? 1 : reps, clearSaveError: true);
     return state;
   }
 
   Future<ActiveWorkoutState> logSet({DateTime? now}) async {
     final current = state;
+    if (current.isSaving) {
+      return current;
+    }
+
+    _state = current.copyWith(isSaving: true, clearSaveError: true);
+    final saving = state;
     try {
       await _repository.logSet(
-        sessionId: current.session.id,
-        exerciseId: current.exercise.id,
-        setIndex: current.setIndex,
-        weight: current.weight,
-        reps: current.reps,
+        sessionId: saving.session.id,
+        exerciseId: saving.exercise.id,
+        setIndex: saving.setIndex,
+        weight: saving.weight,
+        reps: saving.reps,
         completedAt: now ?? DateTime.now(),
       );
+    } catch (_) {
+      _state = saving.copyWith(
+        isResting: false,
+        isSaving: false,
+        saveError: 'Set not saved. Retry.',
+      );
+      return state;
+    }
 
+    try {
       final previousSets = await _repository.previousSetsForExercise(
-        current.exercise.id,
+        saving.exercise.id,
       );
       final currentSets = await _repository.currentSetsForExercise(
-        current.exercise.id,
+        saving.exercise.id,
       );
 
-      _state = current.copyWith(
+      _state = saving.copyWith(
         setIndex: currentSets.length + 1,
         isResting: true,
+        isSaving: false,
         comparison: _compareAgainstPreviousDefault(
           currentSets: currentSets,
           previousSets: previousSets,
@@ -134,9 +161,9 @@ class ActiveWorkoutController {
       );
       return state;
     } catch (_) {
-      _state = current.copyWith(
-        isResting: false,
-        saveError: 'Set not saved. Retry.',
+      _state = saving.copyWith(
+        isSaving: false,
+        saveError: 'Set saved. Refresh workout.',
       );
       return state;
     }
