@@ -1,9 +1,21 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:repfast_app/src/data/sqlite_workout_repository.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() {
+  setUpAll(sqfliteFfiInit);
+
+  Future<SqliteWorkoutRepository> openRepository() async {
+    final database = await databaseFactoryFfi.openDatabase(
+      inMemoryDatabasePath,
+    );
+    final repository = await SqliteWorkoutRepository.openWithDatabase(database);
+    addTearDown(repository.close);
+    return repository;
+  }
+
   test('seeds starter workout data when empty', () async {
-    final repository = await SqliteWorkoutRepository.inMemory();
+    final repository = await openRepository();
     await repository.seedIfEmpty();
 
     final exercise = await repository.activeExercise();
@@ -18,7 +30,7 @@ void main() {
   test(
     'persists a logged set and returns it in current session sets',
     () async {
-      final repository = await SqliteWorkoutRepository.inMemory();
+      final repository = await openRepository();
       await repository.seedIfEmpty();
       final exercise = await repository.activeExercise();
       final session = await repository.activeSession();
@@ -37,4 +49,46 @@ void main() {
       expect(sets.single.reps, 6);
     },
   );
+
+  test('rejects logged sets for missing exercise', () async {
+    final repository = await openRepository();
+    await repository.seedIfEmpty();
+    final session = await repository.activeSession();
+
+    await expectLater(
+      repository.logSet(
+        sessionId: session.id,
+        exerciseId: 'missing-exercise',
+        setIndex: 1,
+        weight: 225,
+        reps: 6,
+        completedAt: DateTime(2026, 5, 9, 12),
+      ),
+      throwsException,
+    );
+
+    final sets = await repository.currentSetsForExercise('missing-exercise');
+    expect(sets, isEmpty);
+  });
+
+  test('rejects logged sets for missing session', () async {
+    final repository = await openRepository();
+    await repository.seedIfEmpty();
+    final exercise = await repository.activeExercise();
+
+    await expectLater(
+      repository.logSet(
+        sessionId: 'missing-session',
+        exerciseId: exercise.id,
+        setIndex: 1,
+        weight: 225,
+        reps: 6,
+        completedAt: DateTime(2026, 5, 9, 12),
+      ),
+      throwsException,
+    );
+
+    final sets = await repository.currentSetsForExercise(exercise.id);
+    expect(sets, isEmpty);
+  });
 }

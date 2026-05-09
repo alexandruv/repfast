@@ -1,6 +1,5 @@
 import 'package:path/path.dart' as p;
 import 'package:sqflite/sqflite.dart' as sqflite;
-import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import '../domain/models.dart';
 import 'workout_repository.dart';
@@ -15,23 +14,27 @@ class SqliteWorkoutRepository implements WorkoutRepository {
     final database = await sqflite.openDatabase(
       p.join(databasesPath, 'repfast.db'),
       version: 1,
+      onConfigure: _configureDatabase,
       onCreate: _createSchema,
     );
     return SqliteWorkoutRepository._(database);
   }
 
-  static Future<SqliteWorkoutRepository> inMemory() async {
-    sqfliteFfiInit();
-    final database = await databaseFactoryFfi.openDatabase(
-      inMemoryDatabasePath,
-      options: sqflite.OpenDatabaseOptions(version: 1, onCreate: _createSchema),
-    );
+  static Future<SqliteWorkoutRepository> openWithDatabase(
+    sqflite.Database database,
+  ) async {
+    await _configureDatabase(database);
+    await _createSchema(database, 1);
     return SqliteWorkoutRepository._(database);
+  }
+
+  static Future<void> _configureDatabase(sqflite.Database db) async {
+    await db.execute('PRAGMA foreign_keys = ON');
   }
 
   static Future<void> _createSchema(sqflite.Database db, int version) async {
     await db.execute('''
-      CREATE TABLE exercises (
+      CREATE TABLE IF NOT EXISTS exercises (
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         weight_increment REAL NOT NULL,
@@ -39,14 +42,14 @@ class SqliteWorkoutRepository implements WorkoutRepository {
       )
     ''');
     await db.execute('''
-      CREATE TABLE sessions (
+      CREATE TABLE IF NOT EXISTS sessions (
         id TEXT PRIMARY KEY,
         started_at TEXT NOT NULL,
         completed_at TEXT
       )
     ''');
     await db.execute('''
-      CREATE TABLE sets (
+      CREATE TABLE IF NOT EXISTS sets (
         id TEXT PRIMARY KEY,
         session_id TEXT NOT NULL,
         exercise_id TEXT NOT NULL,
@@ -162,6 +165,11 @@ class SqliteWorkoutRepository implements WorkoutRepository {
   }
 
   @override
+  Future<void> close() {
+    return _database.close();
+  }
+
+  @override
   Future<WorkoutSet> logSet({
     required String sessionId,
     required String exerciseId,
@@ -199,7 +207,7 @@ class SqliteWorkoutRepository implements WorkoutRepository {
     return Exercise(
       id: row['id']! as String,
       name: row['name']! as String,
-      weightIncrement: row['weight_increment']! as double,
+      weightIncrement: (row['weight_increment']! as num).toDouble(),
       repIncrement: row['rep_increment']! as int,
     );
   }
@@ -219,7 +227,7 @@ class SqliteWorkoutRepository implements WorkoutRepository {
       sessionId: row['session_id']! as String,
       exerciseId: row['exercise_id']! as String,
       setIndex: row['set_index']! as int,
-      weight: row['weight']! as double,
+      weight: (row['weight']! as num).toDouble(),
       reps: row['reps']! as int,
       completedAt: DateTime.parse(row['completed_at']! as String),
     );

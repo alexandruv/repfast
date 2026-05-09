@@ -6,6 +6,7 @@ abstract class WorkoutRepository {
   Future<WorkoutSession> activeSession();
   Future<List<WorkoutSet>> previousSetsForExercise(String exerciseId);
   Future<List<WorkoutSet>> currentSetsForExercise(String exerciseId);
+  Future<void> close();
   Future<WorkoutSet> logSet({
     required String sessionId,
     required String exerciseId,
