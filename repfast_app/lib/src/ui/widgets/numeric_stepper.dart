@@ -28,61 +28,126 @@ class NumericStepper extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: RepFastColors.border),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  label.toUpperCase(),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isCompact = constraints.maxWidth < 260;
+          final value = _StepperValue(
+            label: label,
+            valueText: valueText,
+            unit: unit,
+          );
+          final controls = _StepperControls(
+            label: label,
+            onDecrease: onDecrease,
+            onIncrease: onIncrease,
+          );
+
+          if (isCompact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [value, const SizedBox(height: 12), controls],
+            );
+          }
+
+          return Row(
+            children: [
+              Expanded(child: value),
+              const SizedBox(width: 10),
+              controls,
+            ],
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _StepperValue extends StatelessWidget {
+  const _StepperValue({
+    required this.label,
+    required this.valueText,
+    required this.unit,
+  });
+
+  final String label;
+  final String valueText;
+  final String? unit;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Text(
+          label.toUpperCase(),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: Theme.of(
+            context,
+          ).textTheme.labelLarge?.copyWith(color: RepFastColors.muted),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Flexible(
+              child: Text(
+                valueText,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: Theme.of(context).textTheme.headlineMedium,
+              ),
+            ),
+            if (unit != null) ...[
+              const SizedBox(width: 6),
+              Padding(
+                padding: const EdgeInsets.only(bottom: 4),
+                child: Text(
+                  unit!,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(
                     context,
-                  ).textTheme.labelLarge?.copyWith(color: RepFastColors.muted),
+                  ).textTheme.titleLarge?.copyWith(color: RepFastColors.cyan),
                 ),
-                const SizedBox(height: 8),
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Flexible(
-                      child: Text(
-                        valueText,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.headlineMedium,
-                      ),
-                    ),
-                    if (unit != null) ...[
-                      const SizedBox(width: 6),
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4),
-                        child: Text(
-                          unit!,
-                          style: Theme.of(context).textTheme.titleLarge
-                              ?.copyWith(color: RepFastColors.cyan),
-                        ),
-                      ),
-                    ],
-                  ],
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(width: 10),
-          _StepperButton(
-            label: 'Decrease $label',
-            symbol: '-',
-            onPressed: onDecrease,
-          ),
-          const SizedBox(width: 8),
-          _StepperButton(
-            label: 'Increase $label',
-            symbol: '+',
-            onPressed: onIncrease,
-          ),
-        ],
-      ),
+              ),
+            ],
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _StepperControls extends StatelessWidget {
+  const _StepperControls({
+    required this.label,
+    required this.onDecrease,
+    required this.onIncrease,
+  });
+
+  final String label;
+  final VoidCallback onDecrease;
+  final VoidCallback onIncrease;
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _StepperButton(
+          label: 'Decrease $label',
+          symbol: '-',
+          onPressed: onDecrease,
+        ),
+        const SizedBox(width: 8),
+        _StepperButton(
+          label: 'Increase $label',
+          symbol: '+',
+          onPressed: onIncrease,
+        ),
+      ],
     );
   }
 }
@@ -105,6 +170,8 @@ class _StepperButton extends StatelessWidget {
       button: true,
       child: FilledButton(
         style: FilledButton.styleFrom(
+          padding: EdgeInsets.zero,
+          fixedSize: const Size(56, 56),
           minimumSize: const Size(56, 56),
           tapTargetSize: MaterialTapTargetSize.padded,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),

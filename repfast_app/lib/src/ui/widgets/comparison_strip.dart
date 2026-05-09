@@ -27,53 +27,42 @@ class ComparisonStrip extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
+          Wrap(
+            spacing: 10,
+            runSpacing: 8,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
               Text(
                 'Today vs last time',
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(
                   context,
                 ).textTheme.labelLarge?.copyWith(color: RepFastColors.green),
               ),
-              const Spacer(),
-              if (result.isPersonalRecord)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 6,
-                  ),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: RepFastColors.amber),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: const Text(
-                    'PR',
-                    style: TextStyle(
-                      color: RepFastColors.amber,
-                      fontWeight: FontWeight.w900,
-                    ),
-                  ),
-                ),
+              if (result.isPersonalRecord) const _PersonalRecordBadge(),
             ],
           ),
           const SizedBox(height: 12),
-          Row(
+          Wrap(
+            spacing: 16,
+            runSpacing: 6,
+            crossAxisAlignment: WrapCrossAlignment.end,
             children: [
               Text(
                 deltaText,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                   color: RepFastColors.green,
                 ),
               ),
-              const SizedBox(width: 16),
               if (bestSet != null)
-                Expanded(
-                  child: Text(
-                    'Best ${RepFastCalculators.displayWeight(bestSet.weight)} x ${bestSet.reps}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
+                Text(
+                  'Best ${RepFastCalculators.displayWeight(bestSet.weight)} x ${bestSet.reps}',
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
             ],
           ),
@@ -85,6 +74,33 @@ class ComparisonStrip extends StatelessWidget {
             ).textTheme.bodyMedium?.copyWith(color: RepFastColors.text),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _PersonalRecordBadge extends StatelessWidget {
+  const _PersonalRecordBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Semantics(
+      label: 'Personal record',
+      child: ExcludeSemantics(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          decoration: BoxDecoration(
+            border: Border.all(color: RepFastColors.amber),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: const Text(
+            'PR',
+            style: TextStyle(
+              color: RepFastColors.amber,
+              fontWeight: FontWeight.w900,
+            ),
+          ),
+        ),
       ),
     );
   }
