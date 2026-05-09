@@ -11,7 +11,10 @@ void main() {
     });
 
     test('calculates estimated one rep max using Epley formula', () {
-      expect(RepFastCalculators.estimatedOneRepMax(weight: 225, reps: 6), closeTo(270, 0.001));
+      expect(
+        RepFastCalculators.estimatedOneRepMax(weight: 225, reps: 6),
+        closeTo(270, 0.001),
+      );
     });
 
     test('rounds display values without changing source precision', () {

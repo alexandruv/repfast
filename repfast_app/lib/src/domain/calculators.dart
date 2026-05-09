@@ -5,7 +5,10 @@ class RepFastCalculators {
     return weight * reps;
   }
 
-  static double estimatedOneRepMax({required double weight, required int reps}) {
+  static double estimatedOneRepMax({
+    required double weight,
+    required int reps,
+  }) {
     return weight * (1 + reps / 30);
   }
 

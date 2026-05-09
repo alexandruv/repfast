@@ -156,8 +156,8 @@ class _CockpitBody extends StatelessWidget {
           children: [
             Row(
               children: [
-                const _BrandMark(),
-                const Spacer(),
+                const Expanded(child: _BrandMark()),
+                const SizedBox(width: 12),
                 RestTimerChip(isResting: state.isResting),
               ],
             ),
@@ -303,6 +303,8 @@ class _StatusPill extends StatelessWidget {
           ],
           Text(
             text,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
             style: Theme.of(context).textTheme.labelLarge?.copyWith(
               color: icon == null ? RepFastColors.text : color,
             ),

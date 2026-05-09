@@ -46,6 +46,25 @@ void main() {
     );
   });
 
+  testWidgets('compact mobile viewport has no render overflow', (tester) async {
+    tester.view.physicalSize = const Size(375, 667);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final controller = await openController(tester);
+
+    await tester.pumpWidget(RepFastApp(controller: controller));
+    await tester.pumpUntilFound(find.text('Bench Press'));
+
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.text('LOG SET'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+    await tester.ensureVisible(find.text('Today vs last time'));
+    await tester.pump();
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('weight and reps controls update values', (tester) async {
     final controller = await openController(tester);
 
