@@ -79,6 +79,29 @@ void main() {
     expect(find.text('6'), findsOneWidget);
   });
 
+  testWidgets('settings switch weight display from lb to kg', (tester) async {
+    final controller = await openController(tester);
+
+    await tester.pumpWidget(RepFastApp(controller: controller));
+    await tester.pumpUntilFound(find.text('Bench Press'));
+    expect(find.text('225'), findsOneWidget);
+    expect(find.text('lb'), findsOneWidget);
+
+    await tester.tap(find.byTooltip('Settings'));
+    await tester.pumpAndSettle();
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Weight unit'), findsOneWidget);
+
+    await tester.tap(find.text('kg'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('102.1'), findsOneWidget);
+    expect(find.text('kg'), findsOneWidget);
+    await tester.tap(find.bySemanticsLabel('Increase weight'));
+    await tester.pump();
+    expect(find.text('104.6'), findsOneWidget);
+  });
+
   testWidgets('logging a set advances to set 2, rest, and comparison state', (
     tester,
   ) async {

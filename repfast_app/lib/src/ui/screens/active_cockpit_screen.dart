@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../application/active_workout_controller.dart';
-import '../../domain/calculators.dart';
 import '../theme.dart';
+import '../weight_unit.dart';
 import '../widgets/comparison_strip.dart';
 import '../widgets/numeric_stepper.dart';
 import '../widgets/rest_timer_chip.dart';
@@ -18,6 +18,7 @@ class ActiveCockpitScreen extends StatefulWidget {
 
 class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
   ActiveWorkoutState? _state;
+  WeightUnit _weightUnit = WeightUnit.pounds;
   Object? _loadError;
   bool _isLoading = true;
 
@@ -116,14 +117,63 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
             ? const _LoadingState()
             : _CockpitBody(
                 state: state,
+                weightUnit: _weightUnit,
                 onWeightDown: () =>
-                    _changeWeight(-state.exercise.weightIncrement),
-                onWeightUp: () => _changeWeight(state.exercise.weightIncrement),
+                    _changeWeight(-_weightUnit.stepInPounds(state.exercise)),
+                onWeightUp: () =>
+                    _changeWeight(_weightUnit.stepInPounds(state.exercise)),
                 onRepsDown: () => _changeReps(-state.exercise.repIncrement),
                 onRepsUp: () => _changeReps(state.exercise.repIncrement),
                 onLogSet: _logSet,
+                onOpenSettings: _openSettings,
               ),
       ),
+    );
+  }
+
+  Future<void> _openSettings() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: RepFastColors.surface,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text('Settings', style: Theme.of(context).textTheme.titleLarge),
+                const SizedBox(height: 18),
+                Text(
+                  'Weight unit',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.labelLarge?.copyWith(color: RepFastColors.muted),
+                ),
+                const SizedBox(height: 10),
+                SegmentedButton<WeightUnit>(
+                  segments: const [
+                    ButtonSegment(value: WeightUnit.pounds, label: Text('lb')),
+                    ButtonSegment(
+                      value: WeightUnit.kilograms,
+                      label: Text('kg'),
+                    ),
+                  ],
+                  selected: {_weightUnit},
+                  onSelectionChanged: (selection) {
+                    setState(() {
+                      _weightUnit = selection.single;
+                    });
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }
@@ -131,19 +181,23 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
 class _CockpitBody extends StatelessWidget {
   const _CockpitBody({
     required this.state,
+    required this.weightUnit,
     required this.onWeightDown,
     required this.onWeightUp,
     required this.onRepsDown,
     required this.onRepsUp,
     required this.onLogSet,
+    required this.onOpenSettings,
   });
 
   final ActiveWorkoutState state;
+  final WeightUnit weightUnit;
   final VoidCallback onWeightDown;
   final VoidCallback onWeightUp;
   final VoidCallback onRepsDown;
   final VoidCallback onRepsUp;
   final VoidCallback onLogSet;
+  final VoidCallback onOpenSettings;
 
   @override
   Widget build(BuildContext context) {
@@ -159,6 +213,12 @@ class _CockpitBody extends StatelessWidget {
                 const Expanded(child: _BrandMark()),
                 const SizedBox(width: 12),
                 RestTimerChip(isResting: state.isResting),
+                const SizedBox(width: 8),
+                IconButton.filledTonal(
+                  tooltip: 'Settings',
+                  onPressed: onOpenSettings,
+                  icon: const Icon(Icons.settings_outlined),
+                ),
               ],
             ),
             SizedBox(height: isShort ? 18 : 28),
@@ -190,8 +250,8 @@ class _CockpitBody extends StatelessWidget {
             SizedBox(height: isShort ? 18 : 26),
             NumericStepper(
               label: 'weight',
-              valueText: RepFastCalculators.displayWeight(state.weight),
-              unit: 'lb',
+              valueText: weightUnit.displayWeight(state.weight),
+              unit: weightUnit.label,
               onDecrease: onWeightDown,
               onIncrease: onWeightUp,
             ),
@@ -237,7 +297,11 @@ class _CockpitBody extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 18),
-            ComparisonStrip(result: state.comparison),
+            ComparisonStrip(
+              result: state.comparison,
+              formatWeight: weightUnit.displayWeight,
+              weightUnitLabel: weightUnit.label,
+            ),
           ],
         );
       },

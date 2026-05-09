@@ -5,9 +5,16 @@ import '../../domain/comparison.dart';
 import '../theme.dart';
 
 class ComparisonStrip extends StatelessWidget {
-  const ComparisonStrip({super.key, required this.result});
+  const ComparisonStrip({
+    super.key,
+    required this.result,
+    this.formatWeight,
+    this.weightUnitLabel,
+  });
 
   final WorkoutComparisonResult result;
+  final String Function(double weight)? formatWeight;
+  final String? weightUnitLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -59,7 +66,7 @@ class ComparisonStrip extends StatelessWidget {
               ),
               if (bestSet != null)
                 Text(
-                  'Best ${RepFastCalculators.displayWeight(bestSet.weight)} x ${bestSet.reps}',
+                  'Best ${_displayWeight(bestSet.weight)} x ${bestSet.reps}',
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.titleLarge,
@@ -76,6 +83,13 @@ class ComparisonStrip extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _displayWeight(double weight) {
+    final value =
+        formatWeight?.call(weight) ?? RepFastCalculators.displayWeight(weight);
+    final unit = weightUnitLabel;
+    return unit == null ? value : '$value $unit';
   }
 }
 
