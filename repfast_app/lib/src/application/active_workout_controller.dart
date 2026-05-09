@@ -70,6 +70,7 @@ class ActiveWorkoutController {
 
   final WorkoutRepository _repository;
   ActiveWorkoutState? _state;
+  List<Exercise>? _exercises;
 
   ActiveWorkoutState get state {
     final current = _state;
@@ -79,9 +80,26 @@ class ActiveWorkoutController {
     return current;
   }
 
+  List<Exercise> get cachedExercises =>
+      List.unmodifiable(_exercises ?? const []);
+
   Future<ActiveWorkoutState> load() async {
     await _repository.seedIfEmpty();
+    _exercises = await _repository.exercises();
     final exercise = await _repository.activeExercise();
+    return _loadExercise(exercise);
+  }
+
+  Future<List<Exercise>> exercises() async {
+    await _repository.seedIfEmpty();
+    return _exercises ??= await _repository.exercises();
+  }
+
+  Future<ActiveWorkoutState> selectExercise(Exercise exercise) {
+    return _loadExercise(exercise);
+  }
+
+  Future<ActiveWorkoutState> _loadExercise(Exercise exercise) async {
     final session = await _repository.activeSession();
     final previousSets = await _repository.previousSetsForExercise(exercise.id);
     final currentSets = await _repository.currentSetsForExercise(exercise.id);
@@ -95,6 +113,7 @@ class ActiveWorkoutController {
       setIndex: currentSets.length + 1,
       isResting: false,
       isSaving: false,
+      restStartedAt: null,
       statusLabel: 'Saved on device',
       comparison: _compareAgainstPreviousDefault(
         currentSets: currentSets,

@@ -69,6 +69,25 @@ void main() {
     expect(state.saveError, isNull);
   });
 
+  test('switches selected exercise and resets set defaults', () async {
+    final repository = await openRepository();
+    await repository.seedIfEmpty();
+    final controller = ActiveWorkoutController(repository: repository);
+    await controller.load();
+    final squat = (await controller.exercises()).firstWhere(
+      (exercise) => exercise.name == 'Squat',
+    );
+
+    final state = await controller.selectExercise(squat);
+
+    expect(state.exercise.name, 'Squat');
+    expect(state.weight, 45);
+    expect(state.reps, 5);
+    expect(state.setIndex, 1);
+    expect(state.isResting, isFalse);
+    expect(state.restStartedAt, isNull);
+  });
+
   test(
     'failed logging keeps current values and exposes retry message',
     () async {
@@ -191,6 +210,9 @@ class _FailingWorkoutRepository implements WorkoutRepository {
   Future<Exercise> activeExercise() async => _exercise;
 
   @override
+  Future<List<Exercise>> exercises() async => [_exercise];
+
+  @override
   Future<WorkoutSession> activeSession() async => _session;
 
   @override
@@ -299,6 +321,7 @@ class _MemoryWorkoutRepository implements WorkoutRepository {
     id: 'bench-press',
     name: 'Bench Press',
   );
+  final Exercise _squat = const Exercise(id: 'squat', name: 'Squat');
   final WorkoutSession _session = WorkoutSession(
     id: 'current-session',
     startedAt: DateTime(2026, 5, 9, 12),
@@ -318,6 +341,9 @@ class _MemoryWorkoutRepository implements WorkoutRepository {
 
   @override
   Future<Exercise> activeExercise() async => _exercise;
+
+  @override
+  Future<List<Exercise>> exercises() async => [_exercise, _squat];
 
   @override
   Future<WorkoutSession> activeSession() async => _session;

@@ -2,6 +2,7 @@ import '../domain/models.dart';
 
 abstract class WorkoutRepository {
   Future<void> seedIfEmpty();
+  Future<List<Exercise>> exercises();
   Future<Exercise> activeExercise();
   Future<WorkoutSession> activeSession();
   Future<List<WorkoutSet>> previousSetsForExercise(String exerciseId);

@@ -73,12 +73,40 @@ class SqliteWorkoutRepository implements WorkoutRepository {
     }
 
     await _database.transaction((txn) async {
-      await txn.insert('exercises', const {
-        'id': 'bench-press',
-        'name': 'Bench Press',
-        'weight_increment': 5.0,
-        'rep_increment': 1,
-      });
+      for (final exercise in const [
+        {
+          'id': 'bench-press',
+          'name': 'Bench Press',
+          'weight_increment': 5.0,
+          'rep_increment': 1,
+        },
+        {
+          'id': 'squat',
+          'name': 'Squat',
+          'weight_increment': 5.0,
+          'rep_increment': 1,
+        },
+        {
+          'id': 'deadlift',
+          'name': 'Deadlift',
+          'weight_increment': 5.0,
+          'rep_increment': 1,
+        },
+        {
+          'id': 'overhead-press',
+          'name': 'Overhead Press',
+          'weight_increment': 5.0,
+          'rep_increment': 1,
+        },
+        {
+          'id': 'barbell-row',
+          'name': 'Barbell Row',
+          'weight_increment': 5.0,
+          'rep_increment': 1,
+        },
+      ]) {
+        await txn.insert('exercises', exercise);
+      }
       await txn.insert('sessions', {
         'id': 'previous-session',
         'started_at': DateTime(2026, 5, 2, 12).toIso8601String(),
@@ -120,10 +148,30 @@ class SqliteWorkoutRepository implements WorkoutRepository {
   }
 
   @override
+  Future<List<Exercise>> exercises() async {
+    final rows = await _database.query(
+      'exercises',
+      orderBy: '''
+        CASE id
+          WHEN 'bench-press' THEN 0
+          WHEN 'squat' THEN 1
+          WHEN 'deadlift' THEN 2
+          WHEN 'overhead-press' THEN 3
+          WHEN 'barbell-row' THEN 4
+          ELSE 5
+        END,
+        name ASC
+      ''',
+    );
+    return rows.map(_exerciseFromRow).toList();
+  }
+
+  @override
   Future<Exercise> activeExercise() async {
     final rows = await _database.query(
       'exercises',
-      orderBy: 'id ASC',
+      where: 'id = ?',
+      whereArgs: ['bench-press'],
       limit: 1,
     );
     return _exerciseFromRow(_singleRow(rows, 'active exercise'));

@@ -102,6 +102,30 @@ void main() {
     expect(find.text('104.6'), findsOneWidget);
   });
 
+  testWidgets('exercise title opens selector and changes active exercise', (
+    tester,
+  ) async {
+    final controller = await openController(tester);
+
+    await tester.pumpWidget(RepFastApp(controller: controller));
+    await tester.pumpUntilFound(find.text('Bench Press'));
+
+    await tester.tap(find.text('Bench Press'));
+    await tester.pumpUntilFound(find.text('Choose exercise'));
+    expect(find.text('Choose exercise'), findsOneWidget);
+    await tester.pumpUntilFound(find.text('Squat'));
+
+    await tester.tap(find.text('Squat'));
+    await tester.waitForExercise(controller, 'Squat');
+    await tester.pumpUntilGone(find.text('Choose exercise'));
+    await tester.pumpUntilFound(find.text('Squat'));
+
+    expect(find.text('Squat'), findsOneWidget);
+    expect(controller.state.exercise.name, 'Squat');
+    expect(find.text('45'), findsOneWidget);
+    expect(find.text('Set 1'), findsOneWidget);
+  });
+
   testWidgets('logging a set advances to set 2, rest, and comparison state', (
     tester,
   ) async {
@@ -158,6 +182,16 @@ extension on WidgetTester {
     expect(finder, findsOneWidget);
   }
 
+  Future<void> pumpUntilGone(Finder finder) async {
+    for (var pumpCount = 0; pumpCount < 20; pumpCount += 1) {
+      await pump(const Duration(milliseconds: 50));
+      if (finder.evaluate().isEmpty) {
+        return;
+      }
+    }
+    expect(finder, findsNothing);
+  }
+
   Future<void> waitForSetIndex(
     ActiveWorkoutController controller,
     int setIndex,
@@ -171,5 +205,20 @@ extension on WidgetTester {
       }
     });
     expect(controller.state.setIndex, setIndex);
+  }
+
+  Future<void> waitForExercise(
+    ActiveWorkoutController controller,
+    String exerciseName,
+  ) async {
+    await runAsync(() async {
+      for (var attempt = 0; attempt < 20; attempt += 1) {
+        if (controller.state.exercise.name == exerciseName) {
+          return;
+        }
+        await Future<void>.delayed(const Duration(milliseconds: 10));
+      }
+    });
+    expect(controller.state.exercise.name, exerciseName);
   }
 }

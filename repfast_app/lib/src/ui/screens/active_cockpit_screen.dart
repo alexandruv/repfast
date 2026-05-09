@@ -129,6 +129,7 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
                 onRepsUp: () => _changeReps(state.exercise.repIncrement),
                 onLogSet: _logSet,
                 onOpenSettings: _openSettings,
+                onOpenExerciseSelector: _openExerciseSelector,
               ),
       ),
     );
@@ -188,6 +189,64 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
       },
     );
   }
+
+  Future<void> _openExerciseSelector() async {
+    final exercises = widget.controller.cachedExercises;
+    await showModalBottomSheet<void>(
+      context: context,
+      backgroundColor: RepFastColors.surface,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) {
+        return SafeArea(
+          child: SizedBox(
+            height: MediaQuery.sizeOf(context).height * 0.7,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Choose exercise',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  const SizedBox(height: 12),
+                  Expanded(
+                    child: ListView(
+                      children: [
+                        for (final exercise in exercises)
+                          ListTile(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(exercise.name),
+                            trailing: exercise.id == _state?.exercise.id
+                                ? const Icon(
+                                    Icons.check,
+                                    color: RepFastColors.green,
+                                  )
+                                : null,
+                            onTap: () async {
+                              Navigator.of(context).pop();
+                              final state = await widget.controller
+                                  .selectExercise(exercise);
+                              if (!mounted) {
+                                return;
+                              }
+                              setState(() {
+                                _state = state;
+                              });
+                            },
+                          ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
 }
 
 class _CockpitBody extends StatelessWidget {
@@ -201,6 +260,7 @@ class _CockpitBody extends StatelessWidget {
     required this.onRepsUp,
     required this.onLogSet,
     required this.onOpenSettings,
+    required this.onOpenExerciseSelector,
   });
 
   final ActiveWorkoutState state;
@@ -212,6 +272,7 @@ class _CockpitBody extends StatelessWidget {
   final VoidCallback onRepsUp;
   final VoidCallback onLogSet;
   final VoidCallback onOpenSettings;
+  final VoidCallback onOpenExerciseSelector;
 
   @override
   Widget build(BuildContext context) {
@@ -239,11 +300,36 @@ class _CockpitBody extends StatelessWidget {
               ],
             ),
             SizedBox(height: isShort ? 18 : 28),
-            Text(
-              state.exercise.name,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textTheme.headlineMedium?.copyWith(fontSize: 34),
+            Semantics(
+              button: true,
+              label: 'Select exercise',
+              child: InkWell(
+                borderRadius: BorderRadius.circular(8),
+                onTap: onOpenExerciseSelector,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          state.exercise.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: textTheme.headlineMedium?.copyWith(
+                            fontSize: 34,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      const Icon(
+                        Icons.keyboard_arrow_down,
+                        color: RepFastColors.cyan,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             ),
             const SizedBox(height: 8),
             Text(

@@ -27,6 +27,24 @@ void main() {
     expect(previous.last.reps, 5);
   });
 
+  test('seeds starter exercise list for selection', () async {
+    final repository = await openRepository();
+    await repository.seedIfEmpty();
+
+    final exercises = await repository.exercises();
+
+    expect(
+      exercises.map((exercise) => exercise.name),
+      containsAll([
+        'Bench Press',
+        'Squat',
+        'Deadlift',
+        'Overhead Press',
+        'Barbell Row',
+      ]),
+    );
+  });
+
   test(
     'persists a logged set and returns it in current session sets',
     () async {
