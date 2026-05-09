@@ -46,6 +46,7 @@ void main() {
 
       expect(state.setIndex, 2);
       expect(state.isResting, isTrue);
+      expect(state.restStartedAt, DateTime(2026, 5, 9, 12));
       expect(state.comparison.volumeDeltaPercent, greaterThan(0));
       expect(
         state.comparison.takeaway,
@@ -141,6 +142,7 @@ void main() {
       expect(repository.logCalls, 1);
       expect(state.isSaving, isFalse);
       expect(state.isResting, isTrue);
+      expect(state.restStartedAt, DateTime(2026, 5, 9, 12));
       expect(state.setIndex, 2);
       expect(state.saveError, 'Set saved. Refresh workout.');
     },

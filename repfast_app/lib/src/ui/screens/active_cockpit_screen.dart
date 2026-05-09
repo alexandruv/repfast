@@ -17,6 +17,8 @@ class ActiveCockpitScreen extends StatefulWidget {
 }
 
 class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
+  static const Duration _targetRest = Duration(minutes: 1);
+
   ActiveWorkoutState? _state;
   WeightUnit _weightUnit = WeightUnit.pounds;
   Object? _loadError;
@@ -118,6 +120,7 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
             : _CockpitBody(
                 state: state,
                 weightUnit: _weightUnit,
+                restRemaining: _restRemaining(state),
                 onWeightDown: () =>
                     _changeWeight(-_weightUnit.stepInPounds(state.exercise)),
                 onWeightUp: () =>
@@ -129,6 +132,15 @@ class _ActiveCockpitScreenState extends State<ActiveCockpitScreen> {
               ),
       ),
     );
+  }
+
+  Duration? _restRemaining(ActiveWorkoutState state) {
+    final startedAt = state.restStartedAt;
+    if (!state.isResting || startedAt == null) {
+      return null;
+    }
+    final remaining = _targetRest - DateTime.now().difference(startedAt);
+    return remaining <= Duration.zero ? Duration.zero : remaining;
   }
 
   Future<void> _openSettings() async {
@@ -182,6 +194,7 @@ class _CockpitBody extends StatelessWidget {
   const _CockpitBody({
     required this.state,
     required this.weightUnit,
+    required this.restRemaining,
     required this.onWeightDown,
     required this.onWeightUp,
     required this.onRepsDown,
@@ -192,6 +205,7 @@ class _CockpitBody extends StatelessWidget {
 
   final ActiveWorkoutState state;
   final WeightUnit weightUnit;
+  final Duration? restRemaining;
   final VoidCallback onWeightDown;
   final VoidCallback onWeightUp;
   final VoidCallback onRepsDown;
@@ -212,7 +226,10 @@ class _CockpitBody extends StatelessWidget {
               children: [
                 const Expanded(child: _BrandMark()),
                 const SizedBox(width: 12),
-                RestTimerChip(isResting: state.isResting),
+                RestTimerChip(
+                  isResting: state.isResting,
+                  remaining: restRemaining,
+                ),
                 const SizedBox(width: 8),
                 IconButton.filledTonal(
                   tooltip: 'Settings',

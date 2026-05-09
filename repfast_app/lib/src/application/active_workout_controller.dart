@@ -13,8 +13,11 @@ class ActiveWorkoutState {
     required this.isSaving,
     required this.statusLabel,
     required this.comparison,
+    this.restStartedAt,
     this.saveError,
   });
+
+  static const Object _unchanged = Object();
 
   final Exercise exercise;
   final WorkoutSession session;
@@ -25,6 +28,7 @@ class ActiveWorkoutState {
   final bool isSaving;
   final String statusLabel;
   final WorkoutComparisonResult comparison;
+  final DateTime? restStartedAt;
   final String? saveError;
 
   ActiveWorkoutState copyWith({
@@ -35,6 +39,7 @@ class ActiveWorkoutState {
     bool? isSaving,
     String? statusLabel,
     WorkoutComparisonResult? comparison,
+    Object? restStartedAt = _unchanged,
     String? saveError,
     bool clearSaveError = false,
   }) {
@@ -48,6 +53,9 @@ class ActiveWorkoutState {
       isSaving: isSaving ?? this.isSaving,
       statusLabel: statusLabel ?? this.statusLabel,
       comparison: comparison ?? this.comparison,
+      restStartedAt: identical(restStartedAt, _unchanged)
+          ? this.restStartedAt
+          : restStartedAt as DateTime?,
       saveError: clearSaveError ? null : saveError ?? this.saveError,
     );
   }
@@ -121,6 +129,7 @@ class ActiveWorkoutController {
       return current;
     }
 
+    final completedAt = now ?? DateTime.now();
     _state = current.copyWith(isSaving: true, clearSaveError: true);
     final saving = state;
     try {
@@ -130,12 +139,13 @@ class ActiveWorkoutController {
         setIndex: saving.setIndex,
         weight: saving.weight,
         reps: saving.reps,
-        completedAt: now ?? DateTime.now(),
+        completedAt: completedAt,
       );
     } catch (_) {
       _state = saving.copyWith(
         isResting: false,
         isSaving: false,
+        restStartedAt: null,
         saveError: 'Set not saved. Retry.',
       );
       return state;
@@ -153,6 +163,7 @@ class ActiveWorkoutController {
         setIndex: currentSets.length + 1,
         isResting: true,
         isSaving: false,
+        restStartedAt: completedAt,
         comparison: _compareAgainstPreviousDefault(
           currentSets: currentSets,
           previousSets: previousSets,
@@ -165,6 +176,7 @@ class ActiveWorkoutController {
         setIndex: saving.setIndex + 1,
         isResting: true,
         isSaving: false,
+        restStartedAt: completedAt,
         saveError: 'Set saved. Refresh workout.',
       );
       return state;

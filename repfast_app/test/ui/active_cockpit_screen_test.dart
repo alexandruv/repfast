@@ -118,11 +118,32 @@ void main() {
 
     expect(find.text('Set 2'), findsOneWidget);
     expect(controller.state.isResting, isTrue);
+    expect(controller.state.restStartedAt, isNotNull);
     await tester.drag(find.byType(Scrollable).first, const Offset(0, 500));
-    await tester.pumpUntilFound(find.text('Rest started'));
-    expect(find.text('Rest started'), findsOneWidget);
+    await tester.pumpUntilFound(find.text('Rest 1:00'));
+    expect(find.text('Rest 1:00'), findsOneWidget);
     expect(find.textContaining('+'), findsWidgets);
     expect(find.text('You added one rep at the same weight.'), findsOneWidget);
+  });
+
+  testWidgets('rest timer counts down from one minute', (tester) async {
+    final controller = await openController(tester);
+
+    await tester.pumpWidget(RepFastApp(controller: controller));
+    await tester.pumpUntilFound(find.text('Bench Press'));
+    await tester.ensureVisible(find.text('LOG SET'));
+    await tester.tap(find.text('LOG SET'));
+    await tester.waitForSetIndex(controller, 2);
+    await tester.pumpUntilFound(find.text('Set 2'));
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, 500));
+    await tester.pumpUntilFound(find.text('Rest 1:00'));
+
+    await tester.pump(const Duration(seconds: 2));
+    expect(find.text('Rest 1:00'), findsNothing);
+    expect(find.textContaining('Rest 0:'), findsOneWidget);
+
+    await tester.pump(const Duration(seconds: 58));
+    expect(find.text('Rest done'), findsOneWidget);
   });
 }
 

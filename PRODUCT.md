@@ -34,7 +34,7 @@ RepFast should feel like a serious gym instrument, not a wellness feed. The voic
 2. Offline is normal. Local persistence is a core behavior, not a fallback warning state.
 3. Previous values should do the work. The app should remember and prefill what the lifter most likely needs.
 4. Compare immediately. The emotional payoff is a plain answer about what changed since last time.
-5. Keep power features behind the MVP. Settings, kg/lb preferences, plate calculator, RPE, sync, wearables, and voice can come later.
+5. Keep power features behind the MVP. Settings, kg/lb preferences, rest-duration insights, plate calculator, RPE, sync, wearables, and voice can come later.
 
 ## Accessibility & Inclusion
 
