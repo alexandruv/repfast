@@ -3,27 +3,29 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="RepFast is a product pitch for a dark gym-mode strength tracker built around sub-10-second logging and instant workout comparison.">
-  <title>RepFast | Log faster. Compare instantly.</title>
+  <meta name="description" content="RepFast is a hard-wearing strength tracker concept built for fast offline set logging and instant workout comparison.">
+  <title>RepFast | Open. Lift. Log. Compare.</title>
   <style>
     :root {
       color-scheme: dark;
-      --bg: #050708;
-      --bg-2: #091015;
-      --surface: #0c141a;
-      --surface-2: #111c23;
-      --line: #22323b;
-      --line-strong: #314751;
-      --text: #f2fbfb;
-      --muted: #9aadB4;
-      --dim: #71858d;
-      --cyan: #24e6d0;
-      --cyan-2: #10b8c7;
-      --green: #37ee8a;
-      --amber: #f5b84b;
-      --red: #ff6b6b;
-      --shadow: 0 30px 90px rgba(0, 0, 0, .45);
-      --radius: 8px;
+      --ink: oklch(9% .012 95);
+      --ink-2: oklch(13% .016 95);
+      --steel: oklch(18% .018 95);
+      --panel: oklch(16% .015 95);
+      --panel-2: oklch(22% .02 95);
+      --line: oklch(34% .035 95);
+      --line-hot: oklch(77% .16 92);
+      --text: oklch(94% .018 92);
+      --muted: oklch(71% .032 92);
+      --dim: oklch(55% .028 92);
+      --ink-solid: #171205;
+      --yellow-solid: #ffd21a;
+      --yellow: oklch(84% .17 92);
+      --yellow-2: oklch(72% .15 82);
+      --green: oklch(77% .16 145);
+      --red: oklch(66% .18 28);
+      --shadow: 0 30px 90px oklch(2% .01 95 / .58);
+      --radius: 6px;
       --max: 1180px;
       font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     }
@@ -39,10 +41,12 @@
     body {
       margin: 0;
       min-width: 320px;
+      overflow-x: hidden;
       background:
-        radial-gradient(circle at 18% 0%, rgba(36, 230, 208, .16), transparent 34rem),
-        radial-gradient(circle at 80% 12%, rgba(55, 238, 138, .09), transparent 27rem),
-        linear-gradient(180deg, #071014 0%, var(--bg) 44%, #06090b 100%);
+        linear-gradient(90deg, transparent 0 48%, oklch(84% .17 92 / .055) 48% 52%, transparent 52% 100%),
+        repeating-linear-gradient(0deg, oklch(100% 0 0 / .025) 0 1px, transparent 1px 5px),
+        linear-gradient(135deg, oklch(100% 0 0 / .035) 0 1px, transparent 1px 28px),
+        linear-gradient(180deg, var(--ink-2) 0%, var(--ink) 42%, oklch(7% .01 95) 100%);
       color: var(--text);
       font-size: 16px;
       line-height: 1.5;
@@ -59,7 +63,7 @@
 
     a:focus-visible,
     button:focus-visible {
-      outline: 3px solid var(--amber);
+      outline: 3px solid var(--yellow);
       outline-offset: 4px;
     }
 
@@ -67,15 +71,20 @@
       position: sticky;
       top: 0;
       z-index: 20;
-      border-bottom: 1px solid rgba(49, 71, 81, .5);
-      background: rgba(5, 7, 8, .78);
-      backdrop-filter: blur(18px);
+      border-bottom: 1px solid oklch(84% .17 92 / .32);
+      background: oklch(9% .012 95 / .88);
+      backdrop-filter: blur(14px);
+    }
+
+    .nav,
+    .wrap {
+      width: min(100% - 32px, var(--max));
+      max-width: calc(100vw - 32px);
+      margin: 0 auto;
     }
 
     .nav {
-      width: min(100% - 32px, var(--max));
-      min-height: 64px;
-      margin: 0 auto;
+      min-height: 66px;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -83,24 +92,27 @@
     }
 
     .brand {
+      min-height: 44px;
       display: inline-flex;
       align-items: center;
       gap: 10px;
-      min-height: 44px;
       text-decoration: none;
-      font-weight: 900;
+      font-weight: 950;
       letter-spacing: 0;
+      text-transform: uppercase;
     }
 
     .brand-mark {
-      width: 34px;
-      height: 34px;
-      border: 1px solid rgba(36, 230, 208, .55);
-      border-radius: 8px;
+      width: 38px;
+      height: 38px;
       display: grid;
       place-items: center;
-      background: linear-gradient(135deg, rgba(36, 230, 208, .16), rgba(55, 238, 138, .07));
-      box-shadow: 0 0 24px rgba(36, 230, 208, .18);
+      border: 2px solid var(--yellow);
+      border-radius: var(--radius);
+      background:
+        repeating-linear-gradient(135deg, var(--yellow) 0 6px, var(--ink) 6px 12px);
+      color: var(--yellow);
+      box-shadow: 0 0 0 1px var(--ink), 0 0 28px oklch(84% .17 92 / .22);
     }
 
     .nav-links {
@@ -118,35 +130,44 @@
       gap: 9px;
       border-radius: var(--radius);
       text-decoration: none;
-      font-weight: 800;
+      font-weight: 900;
       white-space: nowrap;
       touch-action: manipulation;
+      text-transform: uppercase;
+      letter-spacing: 0;
     }
 
     .nav-links a {
       padding: 0 12px;
       color: var(--muted);
-      font-size: 14px;
+      font-size: 13px;
     }
 
     .nav-links a:hover {
-      color: var(--text);
-      background: rgba(255, 255, 255, .05);
+      color: var(--yellow);
+      background: oklch(84% .17 92 / .08);
     }
 
     .btn {
-      border: 1px solid rgba(36, 230, 208, .55);
+      border: 1px solid var(--yellow);
       padding: 0 16px;
-      background: var(--cyan);
-      color: #021012;
-      box-shadow: 0 18px 42px rgba(36, 230, 208, .16);
+      background: var(--yellow-solid);
+      background: var(--yellow);
+      color: var(--ink-solid);
+      box-shadow: 0 18px 42px oklch(84% .17 92 / .16);
     }
 
     .btn.secondary {
-      background: rgba(255, 255, 255, .04);
-      color: var(--text);
-      border-color: var(--line-strong);
+      background: transparent;
+      color: var(--yellow);
+      border-color: oklch(84% .17 92 / .55);
       box-shadow: none;
+    }
+
+    .btn:hover,
+    .stepper:hover,
+    .log-button:hover {
+      transform: translateY(-1px);
     }
 
     main {
@@ -154,16 +175,67 @@
     }
 
     section {
-      padding: 72px 0;
+      padding: 76px 0;
     }
 
-    .wrap {
-      width: min(100% - 32px, var(--max));
-      margin: 0 auto;
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    h1 {
+      max-width: 760px;
+      margin-bottom: 18px;
+      font-size: 5.25rem;
+      line-height: .9;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      max-width: 760px;
+      margin-bottom: 16px;
+      font-size: 3.2rem;
+      line-height: .94;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+      font-size: 1.28rem;
+      line-height: 1.12;
+      letter-spacing: 0;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      width: max-content;
+      max-width: 100%;
+      margin: 0 0 16px;
+      padding: 5px 8px;
+      background: var(--yellow-solid);
+      background: var(--yellow);
+      color: var(--ink-solid);
+      font-size: 12px;
+      font-weight: 950;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      text-shadow: none;
+    }
+
+    .lead,
+    .section-intro p:not(.eyebrow),
+    .scenario-copy p:not(.eyebrow),
+    .closing p:not(.eyebrow) {
+      width: 100%;
+      max-width: 690px;
+      color: var(--muted);
+      font-size: 1.12rem;
+      line-height: 1.48;
     }
 
     .hero {
-      padding: 54px 0 80px;
+      padding: 58px 0 72px;
     }
 
     .hero-grid {
@@ -172,117 +244,209 @@
       align-items: center;
     }
 
-    .eyebrow {
-      color: var(--cyan);
-      font-size: 13px;
-      font-weight: 900;
-      letter-spacing: 0;
-      text-transform: uppercase;
-      margin: 0 0 16px;
-    }
-
-    h1, h2, h3, p {
-      margin-top: 0;
-    }
-
-    h1 {
-      max-width: 720px;
-      margin-bottom: 20px;
-      font-size: clamp(44px, 8vw, 86px);
-      line-height: .95;
-      letter-spacing: 0;
-    }
-
-    h2 {
-      max-width: 780px;
-      margin-bottom: 18px;
-      font-size: clamp(32px, 5vw, 58px);
-      line-height: 1;
-      letter-spacing: 0;
-    }
-
-    h3 {
-      margin-bottom: 10px;
-      font-size: 21px;
-      line-height: 1.15;
-      letter-spacing: 0;
-    }
-
-    .lead {
-      max-width: 670px;
-      color: #c3d2d7;
-      font-size: clamp(18px, 2vw, 22px);
-      line-height: 1.45;
+    .hero-grid > *,
+    .scenario > *,
+    .screens > *,
+    .roadmap-grid > * {
+      min-width: 0;
     }
 
     .hero-actions {
       display: flex;
       flex-wrap: wrap;
       gap: 12px;
-      margin: 30px 0;
+      margin: 18px 0 0;
     }
 
-    .stats-row {
+    .quick-log {
       display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 10px;
-      max-width: 590px;
+      gap: 18px;
+      max-width: 520px;
+      margin-top: 26px;
+      padding: 22px;
+      border: 1px solid oklch(84% .17 92 / .32);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, oklch(17% .016 95), oklch(8% .012 95));
     }
 
-    .metric {
-      min-height: 96px;
-      padding: 16px;
+    .quick-log-head,
+    .quick-log-status,
+    .quick-log-stats {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .quick-log-head strong {
+      color: var(--yellow);
+      font-size: 13px;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .quick-log-head span,
+    .quick-log-stats span,
+    .quick-log-actions button {
+      font-size: 12px;
+      font-weight: 900;
+      text-transform: uppercase;
+    }
+
+    .quick-log-head span,
+    .quick-log-stats span {
+      color: var(--yellow);
+    }
+
+    .quick-log-controls {
+      display: grid;
+      gap: 18px;
+    }
+
+    .quick-log-title {
+      margin: 0;
+      font-size: 1.65rem;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .quick-log-field {
+      display: grid;
+      gap: 8px;
+    }
+
+    .quick-log-control {
+      display: grid;
+      grid-template-columns: 1fr 56px 56px;
+      align-items: center;
+      gap: 10px;
+      min-height: 92px;
+      padding: 12px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(12, 20, 26, .76);
+      background: var(--ink);
     }
 
-    .metric strong {
-      display: block;
+    .quick-log-control button {
+      width: 56px;
+      height: 56px;
+      border: 1px solid oklch(84% .17 92 / .38);
+      border-radius: var(--radius);
+      background: var(--panel-2);
       color: var(--text);
-      font-size: clamp(24px, 6vw, 38px);
+      font-size: 28px;
+      font-weight: 950;
+    }
+
+    .quick-log-value {
+      text-align: left;
+    }
+
+    .quick-log-value strong {
+      color: var(--text);
+      font-size: 2.65rem;
       line-height: 1;
       font-variant-numeric: tabular-nums;
     }
 
-    .metric span {
+    .quick-log-value span {
+      color: var(--yellow);
+      font-size: 18px;
+      font-weight: 950;
+    }
+
+    .quick-log-actions {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .quick-log-actions button {
+      min-height: 64px;
+      border-radius: var(--radius);
+      border: 1px solid oklch(84% .17 92 / .42);
+      padding: 0 12px;
+      color: var(--yellow);
+      background: transparent;
+    }
+
+    .quick-log-actions .primary {
+      background: var(--yellow-solid);
+      background: var(--yellow);
+      color: var(--ink-solid);
+      border-color: var(--yellow);
+      font-size: 18px;
+    }
+
+    .quick-log-status {
+      min-height: 38px;
+      padding: 14px;
+      border: 1px solid oklch(84% .17 92 / .16);
+      border-radius: var(--radius);
+      background: oklch(84% .17 92 / .09);
+      color: oklch(91% .045 92);
+      font-size: 14px;
+    }
+
+    .quick-log-status.saved {
+      color: var(--green);
+      border-color: oklch(77% .16 145 / .32);
+      background: oklch(77% .16 145 / .08);
+    }
+
+    .quick-log-stats {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .quick-log-stats div {
+      min-height: 56px;
+      padding: 12px;
+      border: 1px solid oklch(100% 0 0 / .08);
+      border-radius: var(--radius);
+      background: oklch(100% 0 0 / .03);
+    }
+
+    .quick-log-stats strong {
       display: block;
-      margin-top: 8px;
-      color: var(--dim);
-      font-size: 13px;
-      line-height: 1.25;
+      color: var(--text);
+      font-size: 1.45rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
     }
 
     .hero-visual {
       position: relative;
-      min-height: 420px;
+      min-height: 360px;
     }
 
     .hero-visual img {
       width: 100%;
-      min-height: 380px;
+      height: clamp(340px, 38vw, 500px);
       object-fit: cover;
-      border: 1px solid var(--line-strong);
-      border-radius: 8px;
+      border: 1px solid var(--line-hot);
+      border-radius: var(--radius);
       box-shadow: var(--shadow);
+      filter: contrast(1.03) brightness(.9) saturate(.96);
     }
 
     .floating-proof {
       position: absolute;
-      left: 16px;
-      right: 16px;
-      bottom: 16px;
+      left: 14px;
+      right: 14px;
+      bottom: 14px;
       display: grid;
       grid-template-columns: auto 1fr auto;
       gap: 12px;
       align-items: center;
-      min-height: 72px;
+      min-height: 74px;
       padding: 12px;
-      border: 1px solid rgba(55, 238, 138, .38);
+      border: 1px solid var(--yellow);
       border-radius: var(--radius);
-      background: rgba(5, 10, 12, .88);
-      box-shadow: 0 18px 50px rgba(0, 0, 0, .42);
-      backdrop-filter: blur(16px);
+      background: oklch(8% .012 95 / .92);
+      box-shadow: 0 18px 50px oklch(2% .01 95 / .52);
     }
 
     .proof-dot {
@@ -290,17 +454,18 @@
       height: 44px;
       display: grid;
       place-items: center;
-      border-radius: 8px;
-      background: rgba(55, 238, 138, .12);
-      color: var(--green);
+      border-radius: var(--radius);
+      background: var(--yellow);
+      color: var(--ink-solid);
     }
 
     .floating-proof strong {
       display: block;
       font-size: 15px;
+      text-transform: uppercase;
     }
 
-    .floating-proof span {
+    .floating-proof span span {
       display: block;
       color: var(--muted);
       font-size: 13px;
@@ -308,37 +473,42 @@
 
     .proof-value {
       color: var(--green);
-      font-weight: 900;
+      font-weight: 950;
       font-variant-numeric: tabular-nums;
     }
 
     .section-intro {
       display: grid;
-      gap: 14px;
+      gap: 12px;
       margin-bottom: 34px;
     }
 
-    .section-intro p {
-      max-width: 720px;
-      color: var(--muted);
-      font-size: 18px;
-    }
-
     .problem-grid,
-    .roadmap-grid {
+    .roadmap-grid,
+    .loop-grid {
       display: grid;
       gap: 14px;
+    }
+
+    .card,
+    .loop-step,
+    .comparison,
+    .phone {
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
     }
 
     .card {
       min-height: 100%;
       padding: 22px;
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: linear-gradient(180deg, rgba(17, 28, 35, .92), rgba(10, 18, 23, .9));
+      background:
+        linear-gradient(180deg, oklch(19% .018 95 / .94), oklch(11% .012 95 / .95));
     }
 
-    .card p {
+    .card p,
+    .loop-step p,
+    .roadmap-item p {
       color: var(--muted);
       margin-bottom: 0;
     }
@@ -349,30 +519,25 @@
       display: grid;
       place-items: center;
       margin-bottom: 20px;
-      color: var(--cyan);
-      border: 1px solid rgba(36, 230, 208, .35);
+      color: var(--ink-solid);
       border-radius: var(--radius);
-      background: rgba(36, 230, 208, .08);
+      background: var(--yellow-solid);
+      background: var(--yellow);
     }
 
     .loop {
-      border-top: 1px solid var(--line);
-      border-bottom: 1px solid var(--line);
-      background: linear-gradient(90deg, rgba(36, 230, 208, .06), rgba(55, 238, 138, .03), rgba(245, 184, 75, .05));
-    }
-
-    .loop-grid {
-      display: grid;
-      gap: 16px;
+      border-top: 1px solid var(--line-hot);
+      border-bottom: 1px solid var(--line-hot);
+      background:
+        linear-gradient(90deg, oklch(84% .17 92 / .1), transparent 42%),
+        var(--steel);
     }
 
     .loop-step {
-      position: relative;
       min-height: 164px;
-      padding: 24px;
-      border: 1px solid rgba(49, 71, 81, .85);
-      border-radius: var(--radius);
-      background: rgba(5, 9, 11, .72);
+      padding: 22px;
+      border: 1px solid oklch(84% .17 92 / .35);
+      background: oklch(9% .012 95 / .78);
     }
 
     .loop-step .num {
@@ -382,9 +547,9 @@
       min-width: 44px;
       height: 44px;
       margin-bottom: 22px;
-      border-radius: 8px;
-      background: var(--cyan);
-      color: #041113;
+      border-radius: var(--radius);
+      background: var(--yellow);
+      color: var(--ink-solid);
       font-weight: 950;
       font-variant-numeric: tabular-nums;
     }
@@ -393,15 +558,6 @@
       display: grid;
       gap: 30px;
       align-items: center;
-    }
-
-    .scenario-copy {
-      max-width: 650px;
-    }
-
-    .scenario-copy p {
-      color: var(--muted);
-      font-size: 18px;
     }
 
     .scenario-list {
@@ -415,25 +571,26 @@
       grid-template-columns: 44px 1fr;
       gap: 12px;
       align-items: center;
-      min-height: 56px;
+      min-height: 58px;
       padding: 10px;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: rgba(12, 20, 26, .72);
-      color: #d8e5e8;
+      background: oklch(15% .015 95 / .86);
+      color: var(--text);
+      font-weight: 750;
     }
 
     .scenario-list svg {
-      color: var(--cyan);
+      color: var(--yellow);
       justify-self: center;
     }
 
     .comparison {
       padding: 24px;
-      border: 1px solid rgba(55, 238, 138, .34);
-      border-radius: var(--radius);
-      background: #08100d;
-      box-shadow: var(--shadow);
+      border: 1px solid var(--yellow);
+      background:
+        repeating-linear-gradient(135deg, transparent 0 14px, oklch(84% .17 92 / .05) 14px 15px),
+        oklch(10% .012 95);
     }
 
     .comparison-head {
@@ -442,22 +599,23 @@
       gap: 16px;
       align-items: start;
       padding-bottom: 20px;
-      border-bottom: 1px solid rgba(55, 238, 138, .18);
+      border-bottom: 1px solid oklch(84% .17 92 / .24);
     }
 
     .comparison-head span {
-      color: var(--green);
+      color: var(--yellow);
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 950;
       text-transform: uppercase;
     }
 
     .comparison-head strong {
       display: block;
       margin-top: 6px;
-      font-size: 34px;
+      font-size: 2.15rem;
       line-height: 1;
       font-variant-numeric: tabular-nums;
+      text-transform: uppercase;
     }
 
     .comparison-grid {
@@ -473,7 +631,7 @@
       align-items: center;
       min-height: 64px;
       padding: 14px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, .07);
+      border-bottom: 1px solid oklch(100% 0 0 / .08);
     }
 
     .compare-stat:last-child {
@@ -483,11 +641,13 @@
     .compare-stat span {
       color: var(--muted);
       font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 800;
     }
 
     .compare-stat strong {
       color: var(--text);
-      font-size: 22px;
+      font-size: 1.38rem;
       font-variant-numeric: tabular-nums;
     }
 
@@ -497,11 +657,11 @@
       align-items: center;
       justify-content: center;
       padding: 0 10px;
-      border: 1px solid rgba(245, 184, 75, .48);
-      border-radius: 8px;
-      color: var(--amber);
+      border: 1px solid var(--yellow);
+      border-radius: var(--radius);
+      color: var(--yellow);
       font-size: 12px;
-      font-weight: 900;
+      font-weight: 950;
       text-transform: uppercase;
     }
 
@@ -509,8 +669,9 @@
       margin: 18px 0 0;
       padding: 16px;
       border-radius: var(--radius);
-      background: rgba(55, 238, 138, .1);
-      color: #dcffeb;
+      background: oklch(84% .17 92 / .11);
+      color: oklch(94% .04 92);
+      border: 1px solid oklch(84% .17 92 / .18);
     }
 
     .screens {
@@ -523,18 +684,18 @@
       width: min(100%, 340px);
       margin: 0 auto;
       padding: 14px;
-      border: 1px solid #2b3e48;
-      border-radius: 34px;
-      background: linear-gradient(145deg, #1a242b, #05080a);
-      box-shadow: var(--shadow);
+      border: 1px solid var(--line-hot);
+      background:
+        linear-gradient(145deg, oklch(24% .02 95), oklch(8% .012 95));
     }
 
     .screen {
       min-height: 610px;
       padding: 22px;
-      border: 1px solid #243740;
-      border-radius: 24px;
-      background: linear-gradient(180deg, #111d24, #06090b);
+      border: 1px solid oklch(84% .17 92 / .32);
+      border-radius: 22px;
+      background:
+        linear-gradient(180deg, oklch(17% .016 95), oklch(8% .012 95));
     }
 
     .screen-top {
@@ -542,16 +703,16 @@
       justify-content: space-between;
       gap: 12px;
       margin-bottom: 24px;
-      color: var(--muted);
+      color: var(--yellow);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 950;
       text-transform: uppercase;
     }
 
     .big-label {
       color: var(--muted);
       font-size: 13px;
-      font-weight: 900;
+      font-weight: 950;
       text-transform: uppercase;
     }
 
@@ -563,32 +724,39 @@
       min-height: 98px;
       margin-top: 12px;
       padding: 12px;
-      border: 1px solid #21333c;
+      border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: #0b1419;
+      background: var(--ink);
     }
 
     .control strong {
-      font-size: 42px;
+      font-size: 2.65rem;
       line-height: 1;
       font-variant-numeric: tabular-nums;
     }
 
     .control span {
-      color: var(--cyan);
+      color: var(--yellow);
       font-size: 18px;
-      font-weight: 900;
+      font-weight: 950;
     }
 
     .stepper {
       min-width: 56px;
       min-height: 56px;
-      border: 0;
-      border-radius: 8px;
-      background: #162832;
+      border: 1px solid oklch(84% .17 92 / .38);
+      border-radius: var(--radius);
+      background: var(--panel-2);
       color: var(--text);
       font-size: 28px;
-      font-weight: 900;
+      font-weight: 950;
+      transition: transform 180ms cubic-bezier(.16, 1, .3, 1), background 180ms cubic-bezier(.16, 1, .3, 1);
+    }
+
+    .stepper:active {
+      background: var(--yellow);
+      color: var(--ink-solid);
+      transform: translateY(0);
     }
 
     .log-button {
@@ -597,18 +765,20 @@
       margin-top: 18px;
       border: 0;
       border-radius: var(--radius);
-      background: var(--cyan);
-      color: #021012;
+      background: var(--yellow);
+      color: var(--ink-solid);
       font-size: 18px;
       font-weight: 950;
+      transition: transform 180ms cubic-bezier(.16, 1, .3, 1), filter 180ms cubic-bezier(.16, 1, .3, 1);
     }
 
     .mini-note {
       margin-top: 18px;
       padding: 14px;
       border-radius: var(--radius);
-      background: rgba(36, 230, 208, .08);
-      color: #c7fffa;
+      background: oklch(84% .17 92 / .09);
+      color: oklch(91% .045 92);
+      border: 1px solid oklch(84% .17 92 / .16);
       font-size: 14px;
     }
 
@@ -620,13 +790,13 @@
       place-items: center;
       border-radius: 50%;
       background:
-        radial-gradient(circle, #071014 58%, transparent 59%),
-        conic-gradient(var(--green) 0 73%, rgba(255, 255, 255, .1) 73% 100%);
-      box-shadow: inset 0 0 44px rgba(55, 238, 138, .1);
+        radial-gradient(circle, var(--ink) 58%, transparent 59%),
+        conic-gradient(var(--yellow) 0 73%, oklch(100% 0 0 / .12) 73% 100%);
+      box-shadow: inset 0 0 44px oklch(84% .17 92 / .1);
     }
 
     .timer-ring strong {
-      font-size: 54px;
+      font-size: 3.3rem;
       line-height: 1;
       font-variant-numeric: tabular-nums;
     }
@@ -638,6 +808,7 @@
       font-size: 13px;
       text-align: center;
       text-transform: uppercase;
+      font-weight: 850;
     }
 
     .quiet-row {
@@ -646,7 +817,7 @@
       gap: 12px;
       min-height: 52px;
       padding: 12px 0;
-      border-bottom: 1px solid rgba(255, 255, 255, .08);
+      border-bottom: 1px solid oklch(100% 0 0 / .08);
       color: var(--muted);
     }
 
@@ -666,14 +837,15 @@
       justify-content: space-between;
       color: var(--muted);
       font-size: 13px;
-      font-weight: 800;
+      font-weight: 850;
+      text-transform: uppercase;
     }
 
     .bar i {
       display: block;
       height: 12px;
-      border-radius: 8px;
-      background: #15252d;
+      border-radius: var(--radius);
+      background: var(--panel-2);
       overflow: hidden;
     }
 
@@ -683,7 +855,7 @@
       width: var(--w);
       height: 100%;
       border-radius: inherit;
-      background: linear-gradient(90deg, var(--green), var(--cyan));
+      background: linear-gradient(90deg, var(--yellow), var(--green));
     }
 
     .roadmap-item {
@@ -695,17 +867,13 @@
 
     .roadmap-item strong {
       color: var(--text);
-      font-size: 20px;
-    }
-
-    .roadmap-item p {
-      margin: 0;
-      color: var(--muted);
+      font-size: 1.25rem;
+      text-transform: uppercase;
     }
 
     .roadmap-item span {
-      color: var(--cyan);
-      font-weight: 900;
+      color: var(--yellow);
+      font-weight: 950;
       font-variant-numeric: tabular-nums;
     }
 
@@ -718,9 +886,19 @@
       max-width: 820px;
     }
 
-    .closing p {
-      color: var(--muted);
-      font-size: 20px;
+    .closing .eyebrow {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .closing h2 {
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .closing p:not(.eyebrow) {
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .footer {
@@ -728,6 +906,8 @@
       padding: 28px 0;
       color: var(--dim);
       font-size: 14px;
+      text-transform: uppercase;
+      font-weight: 800;
     }
 
     @media (min-width: 680px) {
@@ -791,8 +971,78 @@
       }
     }
 
+    @media (max-width: 760px) {
+      h1 {
+        font-size: 3.05rem;
+        line-height: .94;
+      }
+
+      h2 {
+        font-size: 2.35rem;
+      }
+    }
+
     @media (max-width: 520px) {
-      .stats-row {
+      .nav {
+        width: min(100% - 24px, var(--max));
+        gap: 10px;
+      }
+
+      .brand {
+        gap: 8px;
+        font-size: 15px;
+      }
+
+      .brand-mark {
+        width: 34px;
+        height: 34px;
+      }
+
+      .nav > .btn {
+        min-width: 44px;
+        padding: 0 12px;
+        font-size: 0;
+      }
+
+      .nav > .btn svg {
+        width: 20px;
+        height: 20px;
+      }
+
+      .wrap {
+        width: min(358px, calc(100% - 32px));
+        max-width: 358px;
+        margin-left: 16px;
+        margin-right: 16px;
+      }
+
+      h1 {
+        font-size: 2.7rem;
+        max-width: 9ch;
+      }
+
+      .lead {
+        max-width: 31ch;
+        font-size: 1rem;
+      }
+
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        max-width: calc(100vw - 32px);
+      }
+
+      .hero-actions .btn {
+        width: 100%;
+      }
+
+      .quick-log {
+        max-width: calc(100vw - 32px);
+      }
+
+      .quick-log-controls,
+      .quick-log-stats,
+      .quick-log-actions {
         grid-template-columns: 1fr;
       }
 
@@ -836,8 +1086,8 @@
       </a>
       <div class="nav-links">
         <a href="#problem">Problem</a>
-        <a href="#loop">10-second loop</a>
-        <a href="#v1">V1 design</a>
+        <a href="#loop">Log loop</a>
+        <a href="#v1">Screens</a>
         <a href="#roadmap">Roadmap</a>
       </div>
       <a class="btn secondary" href="#pitch">
@@ -853,39 +1103,70 @@
     <section class="hero" id="pitch">
       <div class="wrap hero-grid">
         <div>
-          <p class="eyebrow">Offline strength tracking concept</p>
-          <h1>Faster than a notebook, smarter than a spreadsheet.</h1>
-          <p class="lead">RepFast is a dark gym-mode logger built around one promise: log a set in under 10 seconds, then instantly see what changed since last time.</p>
+          <p class="eyebrow">Offline strength tracking</p>
+          <h1>Open. Lift. Log. Compare.</h1>
+          <p class="lead">RepFast is a yellow-and-black gym-floor logger built around one promise: capture the set in under 10 seconds, even when signal is gone and the next plate decision is already due.</p>
+          <div class="quick-log" aria-label="Interactive RepFast log demo">
+            <div class="quick-log-head">
+              <strong>RepFast</strong>
+              <span id="demoSet">Set 4/5</span>
+            </div>
+            <h2 class="quick-log-title">Bench Press</h2>
+            <div class="quick-log-controls">
+              <div class="quick-log-field">
+                <p class="big-label">Weight</p>
+                <div class="quick-log-control">
+                  <div class="quick-log-value"><strong id="demoWeight">225</strong> <span>lb</span></div>
+                  <button type="button" data-demo-step="weight" data-demo-dir="-5" aria-label="Decrease demo weight">-</button>
+                  <button type="button" data-demo-step="weight" data-demo-dir="5" aria-label="Increase demo weight">+</button>
+                </div>
+              </div>
+              <div class="quick-log-field">
+                <p class="big-label">Reps</p>
+                <div class="quick-log-control">
+                  <div class="quick-log-value"><strong id="demoReps">6</strong></div>
+                  <button type="button" data-demo-step="reps" data-demo-dir="-1" aria-label="Decrease demo reps">-</button>
+                  <button type="button" data-demo-step="reps" data-demo-dir="1" aria-label="Increase demo reps">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="quick-log-actions">
+              <button class="primary" type="button" id="demoLog">LOG SET</button>
+            </div>
+            <div class="quick-log-status" id="demoStatus" aria-live="polite">
+              Previous: 225 lb x 5. Ready offline.
+            </div>
+            <div class="quick-log-stats" aria-label="Demo outcome">
+              <div><strong id="demoRest">2:30</strong><span>Rest timer</span></div>
+              <div><strong id="demoDelta">+8%</strong><span>Volume delta</span></div>
+              <div><strong id="demoSave">Local</strong><span>Storage mode</span></div>
+            </div>
+          </div>
           <div class="hero-actions" aria-label="Pitch shortcuts">
             <a class="btn" href="#v1">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <rect x="7" y="2.8" width="10" height="18.4" rx="2.4" stroke="currentColor" stroke-width="2.2"/>
                 <path d="M10 18h4" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
               </svg>
-              See V1 screens
+              See screens
             </a>
             <a class="btn secondary" href="#scenario">
               <svg width="19" height="19" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
-              Gym-floor scenario
+              Gym scenario
             </a>
-          </div>
-          <div class="stats-row" aria-label="RepFast pitch metrics">
-            <div class="metric"><strong>&lt;10s</strong><span>Target set logging loop</span></div>
-            <div class="metric"><strong>0</strong><span>Signup screens in V1</span></div>
-            <div class="metric"><strong>1 hand</strong><span>Oversized controls for shaky sets</span></div>
           </div>
         </div>
         <div class="hero-visual" aria-label="RepFast product visual">
-          <img src="assets/repfast-hero-ai.png" width="2048" height="1152" alt="Dark gym product visual with a phone showing a RepFast-style workout logger beside a barbell.">
+          <img src="assets/repfast-hero-product.png" width="1586" height="992" alt="RepFast workout logger on a phone beside a bench and loaded barbell, showing 225 lb, 6 reps, a yellow log button, and saved-on-device status.">
           <div class="floating-proof">
             <span class="proof-dot" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                 <path d="M20 6 9 17l-5-5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
             </span>
-            <span><strong>Last session remembered</strong><span>225 lb × 5 prefilled for the next heavy set</span></span>
+            <span><strong>Previous set loaded</strong><span>225 lb x 5 ready before the next attempt</span></span>
             <span class="proof-value">+8%</span>
           </div>
         </div>
@@ -896,8 +1177,8 @@
       <div class="wrap">
         <div class="section-intro">
           <p class="eyebrow">The gap</p>
-          <h2>Most workout apps ask too much from someone under a bar.</h2>
-          <p>RepFast is not a social feed, coaching platform, ad surface, or cloud dashboard. It is a lean gym-floor tool for the moment when the lifter has shaky hands, poor signal, and a rest clock already running.</p>
+          <h2>Most workout apps get soft when the set gets hard.</h2>
+          <p>RepFast skips social feeds, coaching clutter, login walls, and spreadsheet views. It is a serious logging instrument for the exact moment when the lifter has shaky hands, poor signal, and no patience for navigation.</p>
         </div>
         <div class="problem-grid">
           <article class="card">
@@ -907,7 +1188,7 @@
               </svg>
             </span>
             <h3>Too many screens</h3>
-            <p>Menus, workout builders, feeds, and prompts get between the user and the only thing they need to capture: weight and reps.</p>
+            <p>Menus, builders, feeds, and prompts get between the lifter and the only numbers that matter during a set: weight and reps.</p>
           </article>
           <article class="card">
             <span class="icon-box" aria-hidden="true">
@@ -917,7 +1198,7 @@
               </svg>
             </span>
             <h3>Signal-dependent</h3>
-            <p>A gym basement should never break the log. V1 stores workouts locally and avoids mandatory cloud sync.</p>
+            <p>A basement gym should not break the log. V1 stores sessions locally and treats offline as normal.</p>
           </article>
           <article class="card">
             <span class="icon-box" aria-hidden="true">
@@ -927,7 +1208,7 @@
               </svg>
             </span>
             <h3>Spreadsheet thinking</h3>
-            <p>Raw history is useful later. During a session, the app should answer one question fast: did this beat last time?</p>
+            <p>History is useful later. During a workout, the app should answer one question fast: did this beat last time?</p>
           </article>
         </div>
       </div>
@@ -938,7 +1219,7 @@
         <div class="section-intro">
           <p class="eyebrow">Product idea</p>
           <h2>The 10-second log loop.</h2>
-          <p>Open, lift, log, compare. RepFast remembers the last values, keeps controls oversized, starts rest automatically, and translates the session into a plain-English performance card.</p>
+          <p>Open, lift, log, compare. RepFast remembers the last values, keeps controls oversized, starts rest automatically, and turns the result into a plain performance verdict.</p>
         </div>
         <div class="loop-grid">
           <article class="loop-step">
@@ -949,17 +1230,17 @@
           <article class="loop-step">
             <span class="num">2</span>
             <h3>Confirm defaults</h3>
-            <p>Weight and reps prefill from the previous time. Most sets need one tap.</p>
+            <p>Weight and reps prefill from last time. Most sets need one tap.</p>
           </article>
           <article class="loop-step">
             <span class="num">3</span>
             <h3>Start rest timer</h3>
-            <p>Logging a set immediately starts the rest clock and keeps the next action visible.</p>
+            <p>Logging a set starts the clock and keeps the next action visible.</p>
           </article>
           <article class="loop-step">
             <span class="num">4</span>
             <h3>Compare instantly</h3>
-            <p>The payoff is not a chart hunt. It is a simple “today vs last time” answer.</p>
+            <p>The payoff is not a chart hunt. It is a simple today-vs-last-time answer.</p>
           </article>
         </div>
       </div>
@@ -969,8 +1250,8 @@
       <div class="wrap scenario">
         <div class="scenario-copy">
           <p class="eyebrow">Real gym moment</p>
-          <h2>Heavy bench set. Chalky hands. Bad signal. Twenty seconds before the next decision.</h2>
-          <p>The lifter racks 225 after a hard sixth rep. They are breathing, their hands are shaky, and the bench is not theirs for long. RepFast opens straight to Bench Press, shows 225 × 5 from the last session, lets them bump reps to 6 with one thumb, and immediately says volume is up.</p>
+          <h2>Heavy bench set. Chalky hands. Bad signal. One decision before the bar gets loaded again.</h2>
+          <p>The lifter racks 225 after a hard sixth rep. RepFast opens straight to Bench Press, shows 225 x 5 from the last session, lets them bump reps to 6 with one thumb, and immediately says volume is up.</p>
           <div class="scenario-list">
             <div>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -983,14 +1264,14 @@
                 <path d="M5 12a7 7 0 0 1 14 0M8 15a4 4 0 0 1 8 0M12 19h.01" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
                 <path d="M4 4 20 20" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
               </svg>
-              Offline-first storage when gym Wi-Fi disappears.
+              Offline-first storage when gym Wi-Fi drops.
             </div>
             <div>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
                 <path d="m4 16 5-5 4 4 7-8" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
                 <path d="M4 20h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
               </svg>
-              Instant comparison before the next load choice.
+              Instant comparison before the next load call.
             </div>
           </div>
         </div>
@@ -1004,11 +1285,11 @@
           </div>
           <div class="comparison-grid">
             <div class="compare-stat"><span>Session volume</span><strong>+8%</strong></div>
-            <div class="compare-stat"><span>Best set</span><strong>225 × 6</strong></div>
+            <div class="compare-stat"><span>Best set</span><strong>225 x 6</strong></div>
             <div class="compare-stat"><span>Estimated 1RM</span><strong>270 lb</strong></div>
-            <div class="compare-stat"><span>Rest consistency</span><strong>2:05 avg</strong></div>
+            <div class="compare-stat"><span>Rest average</span><strong>2:05</strong></div>
           </div>
-          <p class="takeaway">You matched last session’s top weight and added one rep. Keep the same load next set unless speed drops.</p>
+          <p class="takeaway">You matched last session's top weight and added one rep. Keep the same load next set unless bar speed drops.</p>
         </aside>
       </div>
     </section>
@@ -1017,8 +1298,8 @@
       <div class="wrap">
         <div class="section-intro">
           <p class="eyebrow">First-version mobile app</p>
-          <h2>Dark Gym Mode, built for low light and tired hands.</h2>
-          <p>V1 stays intentionally narrow: offline workout logging, previous-set defaults, oversized weight and rep controls, auto-rest timing, and the performance card.</p>
+          <h2>Yellow-black gym mode, built for low light and tired hands.</h2>
+          <p>V1 stays narrow: offline workout logging, previous-set defaults, oversized weight and rep controls, auto-rest timing, and a compact performance card.</p>
         </div>
         <div class="screens" aria-label="Three RepFast mobile screen mockups">
           <article class="phone">
@@ -1028,17 +1309,17 @@
               <p class="big-label">Weight</p>
               <div class="control">
                 <div><strong>225</strong> <span>lb</span></div>
-                <button class="stepper" type="button" aria-label="Decrease weight">−</button>
+                <button class="stepper" type="button" aria-label="Decrease weight">-</button>
                 <button class="stepper" type="button" aria-label="Increase weight">+</button>
               </div>
               <p class="big-label" style="margin-top: 18px;">Reps</p>
               <div class="control">
                 <div><strong>6</strong></div>
-                <button class="stepper" type="button" aria-label="Decrease reps">−</button>
+                <button class="stepper" type="button" aria-label="Decrease reps">-</button>
                 <button class="stepper" type="button" aria-label="Increase reps">+</button>
               </div>
               <button class="log-button" type="button">LOG SET</button>
-              <p class="mini-note">Previous: 225 × 5. Defaults loaded locally.</p>
+              <p class="mini-note">Previous: 225 x 5. Defaults loaded locally.</p>
             </div>
           </article>
           <article class="phone">
@@ -1050,7 +1331,7 @@
               </div>
               <div class="quiet-row"><span>Target rest</span><strong>2:30</strong></div>
               <div class="quiet-row"><span>Next weight</span><strong>225 lb</strong></div>
-              <div class="quiet-row"><span>Last top set</span><strong>225 × 5</strong></div>
+              <div class="quiet-row"><span>Last top set</span><strong>225 x 5</strong></div>
               <p class="mini-note">Timer starts automatically when the set is logged.</p>
             </div>
           </article>
@@ -1120,5 +1401,80 @@
   <footer class="footer">
     <div class="wrap">RepFast product pitch concept. Built as a static stakeholder discussion page.</div>
   </footer>
+  <script>
+    const demo = {
+      weight: 225,
+      reps: 6,
+      set: 4,
+      rest: 150,
+      timer: null
+    };
+
+    const fields = {
+      weight: document.getElementById("demoWeight"),
+      reps: document.getElementById("demoReps"),
+      set: document.getElementById("demoSet"),
+      status: document.getElementById("demoStatus"),
+      rest: document.getElementById("demoRest"),
+      delta: document.getElementById("demoDelta"),
+      save: document.getElementById("demoSave")
+    };
+
+    const formatTime = seconds => {
+      const minutes = Math.floor(seconds / 60);
+      const restSeconds = String(seconds % 60).padStart(2, "0");
+      return `${minutes}:${restSeconds}`;
+    };
+
+    const renderDemo = () => {
+      fields.weight.textContent = demo.weight;
+      fields.reps.textContent = demo.reps;
+      fields.set.textContent = `Set ${demo.set}/5`;
+      fields.rest.textContent = formatTime(demo.rest);
+      fields.delta.textContent = demo.reps > 5 ? "+8%" : "Even";
+    };
+
+    const setStatus = (text, state) => {
+      fields.status.textContent = text;
+      fields.status.className = `quick-log-status ${state || ""}`.trim();
+      fields.save.textContent = "Local";
+    };
+
+    const startRest = () => {
+      clearInterval(demo.timer);
+      demo.rest = 150;
+      renderDemo();
+      demo.timer = setInterval(() => {
+        demo.rest = Math.max(0, demo.rest - 1);
+        fields.rest.textContent = formatTime(demo.rest);
+        if (demo.rest === 0) {
+          clearInterval(demo.timer);
+        }
+      }, 1000);
+    };
+
+    document.querySelectorAll("[data-demo-step]").forEach(button => {
+      button.addEventListener("click", () => {
+        const step = button.dataset.demoStep;
+        const dir = Number(button.dataset.demoDir);
+        if (step === "weight") {
+          demo.weight = Math.max(45, demo.weight + dir);
+        } else {
+          demo.reps = Math.max(1, demo.reps + dir);
+        }
+        setStatus("Defaults adjusted. Set is still saved on device.", "saved");
+        renderDemo();
+      });
+    });
+
+    document.getElementById("demoLog").addEventListener("click", () => {
+      demo.set = Math.min(5, demo.set + 1);
+      setStatus(`Saved on device: ${demo.weight} lb x ${demo.reps}. Rest timer started.`, "saved");
+      startRest();
+      renderDemo();
+    });
+
+    renderDemo();
+  </script>
 </body>
 </html>
