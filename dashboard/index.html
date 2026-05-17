@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="RepFast Training Dashboard turns exported workout CSV data into useful strength progress, consistency, volume, and rest insights.">
+  <title>RepFast Training Dashboard | Exported Workout Progress</title>
+  <link rel="icon" type="image/png" href="/assets/repfast-logo.png">
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #080704;
+      --bg-2: #111007;
+      --panel: #151207;
+      --panel-2: #1e190d;
+      --panel-3: #261f0f;
+      --line: #5a4b17;
+      --line-hot: #d7af11;
+      --text: #f3efe4;
+      --muted: #b8ae97;
+      --dim: #867e69;
+      --yellow: #ffd21a;
+      --yellow-2: #e0af12;
+      --green: #79d47a;
+      --blue: #67b7ff;
+      --orange: #ff9f43;
+      --red: #d95b48;
+      --purple: #b894ff;
+      --shadow: 0 30px 90px rgb(0 0 0 / .58);
+      --radius: 10px;
+      --radius-lg: 24px;
+      --max: 1440px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      background:
+        radial-gradient(circle at 18% -10%, rgb(255 210 26 / .20), transparent 31rem),
+        radial-gradient(circle at 88% 12%, rgb(121 212 122 / .11), transparent 28rem),
+        radial-gradient(circle at 74% 76%, rgb(103 183 255 / .08), transparent 34rem),
+        linear-gradient(180deg, var(--bg-2), var(--bg) 40%, #050402);
+      color: var(--text);
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    a { color: inherit; }
+
+    a:focus-visible,
+    button:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 4px;
+    }
+
+    .shell {
+      width: min(100% - 32px, var(--max));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      border-bottom: 1px solid rgb(255 210 26 / .26);
+      background: rgb(8 7 4 / .88);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav {
+      min-height: 68px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+    }
+
+    .brand,
+    .nav-links,
+    .btn,
+    .status-pill,
+    .chip,
+    .metric-chip,
+    .tab-button {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .brand {
+      gap: 10px;
+      min-height: 44px;
+      color: var(--text);
+      text-decoration: none;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .brand img {
+      width: 38px;
+      height: 38px;
+      border: 2px solid var(--yellow);
+      border-radius: 8px;
+      background: var(--yellow);
+      object-fit: cover;
+    }
+
+    .nav-links { display: none; gap: 8px; }
+
+    .nav-links a,
+    .btn {
+      min-height: 42px;
+      justify-content: center;
+      border-radius: 8px;
+      padding: 0 13px;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 900;
+      text-decoration: none;
+      text-transform: uppercase;
+    }
+
+    .nav-links a:hover { color: var(--yellow); background: rgb(255 210 26 / .08); }
+
+    .btn {
+      gap: 9px;
+      border: 1px solid rgb(255 210 26 / .44);
+      color: var(--yellow);
+      background: rgb(255 210 26 / .06);
+    }
+
+    .hero {
+      padding: 54px 0 26px;
+    }
+
+    .hero-grid {
+      display: grid;
+      gap: 22px;
+      align-items: end;
+    }
+
+    .eyebrow,
+    .status-pill,
+    .chip,
+    .metric-chip {
+      width: max-content;
+      max-width: 100%;
+      min-height: 28px;
+      padding: 5px 8px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 950;
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .eyebrow {
+      margin: 0 0 16px;
+      color: #171205;
+      background: var(--yellow);
+    }
+
+    h1,
+    h2,
+    h3,
+    p { margin-top: 0; }
+
+    h1 {
+      max-width: 880px;
+      margin-bottom: 18px;
+      font-size: clamp(3.05rem, 8vw, 7.7rem);
+      line-height: .86;
+      letter-spacing: -.04em;
+      text-transform: uppercase;
+    }
+
+    h2 {
+      margin-bottom: 14px;
+      font-size: clamp(2rem, 3.5vw, 3.6rem);
+      line-height: .92;
+      letter-spacing: -.035em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin-bottom: 8px;
+      font-size: 1.05rem;
+      line-height: 1.08;
+      text-transform: uppercase;
+    }
+
+    .lead {
+      max-width: 780px;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+    }
+
+    .hero-panel,
+    .card,
+    .chart-card,
+    .insight-card,
+    .table-card {
+      border: 1px solid rgb(255 210 26 / .19);
+      border-radius: var(--radius-lg);
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / .045), transparent),
+        rgb(21 18 7 / .86);
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel {
+      display: grid;
+      gap: 16px;
+      padding: 18px;
+    }
+
+    .status-pill {
+      color: var(--green);
+      border: 1px solid rgb(121 212 122 / .32);
+      background: rgb(121 212 122 / .08);
+    }
+
+    .hero-kpis {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .hero-kpi {
+      min-height: 96px;
+      padding: 14px;
+      border: 1px solid rgb(255 255 255 / .08);
+      border-radius: 12px;
+      background: rgb(255 255 255 / .035);
+    }
+
+    .hero-kpi strong {
+      display: block;
+      color: var(--text);
+      font-size: clamp(2rem, 4vw, 3.3rem);
+      line-height: .9;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .hero-kpi span {
+      display: block;
+      margin-top: 8px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .board {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+      padding: 22px 0 70px;
+    }
+
+    .metric-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .card,
+    .chart-card,
+    .insight-card,
+    .table-card { padding: 18px; }
+
+    .metric-card {
+      min-height: 150px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .metric-card::after {
+      content: "";
+      position: absolute;
+      inset: auto -18px -34px auto;
+      width: 118px;
+      height: 118px;
+      border-radius: 50%;
+      background: var(--glow, rgb(255 210 26 / .12));
+      filter: blur(4px);
+    }
+
+    .metric-card span,
+    .panel-label,
+    .row span,
+    .small,
+    .chip,
+    .metric-chip,
+    .axis-label {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .metric-card strong {
+      display: block;
+      margin-top: 16px;
+      font-size: clamp(2.1rem, 4.6vw, 4.25rem);
+      line-height: .9;
+      letter-spacing: -.04em;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .metric-card p {
+      margin: 10px 0 0;
+      color: var(--dim);
+      font-size: .92rem;
+    }
+
+    .chart-card {
+      overflow: hidden;
+    }
+
+    .panel-head {
+      display: flex;
+      align-items: start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .panel-head p { margin: 5px 0 0; color: var(--dim); }
+
+    .chart {
+      display: grid;
+      grid-template-columns: 42px repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      align-items: end;
+      min-height: 310px;
+      padding: 16px 12px 10px;
+      border: 1px solid rgb(255 255 255 / .08);
+      border-radius: 16px;
+      background:
+        linear-gradient(180deg, rgb(255 255 255 / .035), transparent),
+        repeating-linear-gradient(0deg, transparent 0 54px, rgb(255 255 255 / .055) 55px 56px);
+    }
+
+    .y-axis {
+      height: 250px;
+      display: grid;
+      align-content: space-between;
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .bar-group {
+      display: grid;
+      gap: 8px;
+      align-content: end;
+      height: 250px;
+      min-width: 0;
+    }
+
+    .bar {
+      position: relative;
+      display: block;
+      min-height: 22px;
+      height: var(--h);
+      border: 1px solid rgb(255 210 26 / .46);
+      border-radius: 10px 10px 4px 4px;
+      background: linear-gradient(180deg, var(--yellow), var(--yellow-2) 52%, rgb(121 212 122 / .88));
+      box-shadow: 0 0 28px rgb(255 210 26 / .18);
+    }
+
+    .bar::before {
+      content: attr(data-volume);
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 8px);
+      transform: translateX(-50%);
+      color: var(--text);
+      font-size: 11px;
+      font-weight: 950;
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    .bar-group strong {
+      color: var(--muted);
+      font-size: 11px;
+      line-height: 1;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .exercise-list,
+    .rows,
+    .timeline {
+      display: grid;
+      gap: 10px;
+    }
+
+    .exercise-row {
+      display: grid;
+      grid-template-columns: minmax(120px, .86fr) 1fr auto;
+      gap: 12px;
+      align-items: center;
+      min-height: 58px;
+      padding: 12px;
+      border: 1px solid rgb(255 255 255 / .08);
+      border-radius: 14px;
+      background: rgb(255 255 255 / .03);
+    }
+
+    .exercise-row strong,
+    .row strong { font-variant-numeric: tabular-nums; }
+
+    .track {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: rgb(255 255 255 / .08);
+    }
+
+    .fill {
+      display: block;
+      width: var(--w);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--yellow), var(--green));
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+    }
+
+    .day {
+      min-height: 68px;
+      display: grid;
+      align-content: space-between;
+      padding: 9px;
+      border: 1px solid rgb(255 255 255 / .08);
+      border-radius: 12px;
+      background: rgb(255 255 255 / .028);
+      color: var(--dim);
+      font-size: 11px;
+      font-weight: 850;
+    }
+
+    .day.active {
+      color: var(--text);
+      border-color: rgb(255 210 26 / .5);
+      background: linear-gradient(180deg, rgb(255 210 26 / .18), rgb(121 212 122 / .09));
+    }
+
+    .day strong { color: var(--yellow); font-size: 14px; }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 52px;
+      padding: 13px 0;
+      border-bottom: 1px solid rgb(255 255 255 / .08);
+    }
+
+    .row:last-child { border-bottom: 0; }
+
+    .insight-grid {
+      display: grid;
+      gap: 14px;
+    }
+
+    .insight-card {
+      min-height: 186px;
+      display: grid;
+      align-content: space-between;
+    }
+
+    .insight-card.good { border-color: rgb(121 212 122 / .3); }
+    .insight-card.warn { border-color: rgb(255 159 67 / .34); }
+    .insight-card.info { border-color: rgb(103 183 255 / .28); }
+
+    .insight-card p { color: var(--muted); margin-bottom: 0; }
+
+    .metric-chip {
+      color: var(--text);
+      border: 1px solid rgb(255 255 255 / .09);
+      background: rgb(255 255 255 / .045);
+    }
+
+    .source-card {
+      border: 1px solid rgb(255 210 26 / .2);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      background:
+        linear-gradient(90deg, rgb(255 210 26 / .11), transparent),
+        rgb(13 11 5 / .92);
+    }
+
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+
+    .chip {
+      color: var(--yellow);
+      border: 1px solid rgb(255 210 26 / .24);
+      background: rgb(255 210 26 / .065);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      text-transform: none;
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .primary-cta {
+      min-height: 50px;
+      padding: 0 16px;
+      border-radius: 10px;
+      color: #171205;
+      background: var(--yellow);
+      font-size: 13px;
+      font-weight: 950;
+      text-decoration: none;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .footer {
+      border-top: 1px solid rgb(255 210 26 / .16);
+      padding: 26px 0 36px;
+      color: var(--dim);
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    @media (min-width: 760px) {
+      .nav-links { display: inline-flex; }
+      .hero-grid { grid-template-columns: 1.15fr .85fr; }
+      .metric-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+      .board { grid-template-columns: 1.15fr .85fr; align-items: start; }
+      .wide { grid-column: 1 / -1; }
+      .insight-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    @media (min-width: 1120px) {
+      .board { grid-template-columns: 1.32fr .9fr; }
+    }
+
+    @media (max-width: 680px) {
+      .hero-kpis, .metric-grid { grid-template-columns: 1fr; }
+      .chart { grid-template-columns: 32px repeat(7, minmax(36px, 1fr)); overflow-x: auto; }
+      .exercise-row { grid-template-columns: 1fr; }
+      .calendar { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+      .row { display: grid; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <nav class="shell nav" aria-label="Dashboard navigation">
+      <a class="brand" href="/" aria-label="RepFast home">
+        <img src="/assets/repfast-logo.png" width="1254" height="1254" alt="">
+        RepFast
+      </a>
+      <div class="nav-links">
+        <a href="#volume">Volume</a>
+        <a href="#exercises">Exercises</a>
+        <a href="#consistency">Consistency</a>
+        <a href="#verdict">Verdict</a>
+      </div>
+      <a class="btn" href="/">Back to pitch</a>
+    </nav>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="shell hero-grid">
+        <div>
+          <p class="eyebrow">RepFast Training Dashboard</p>
+          <h1>Seven months of lifting, made readable.</h1>
+          <p class="lead">A real dashboard for the user who kept tracking. Based on the fake KAN-29 export seeded in the app, this view turns local CSV rows into volume trends, exercise contribution, consistency, rest discipline, and a blunt training block verdict.</p>
+        </div>
+        <aside class="hero-panel" aria-label="Export source summary">
+          <span class="status-pill">Export window: Oct 2025 — Apr 2026</span>
+          <div class="hero-kpis">
+            <div class="hero-kpi"><strong>23,280 lb</strong><span>Total loaded volume</span></div>
+            <div class="hero-kpi"><strong>21 workouts</strong><span>3 sessions in the same week each month</span></div>
+            <div class="hero-kpi"><strong>84 sets</strong><span>CSV rows analyzed</span></div>
+            <div class="hero-kpi"><strong>7 months</strong><span>Oct 2025 to Apr 2026</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
+
+    <section class="shell board" aria-label="Training dashboard">
+      <div class="metric-grid wide">
+        <article class="card metric-card" style="--glow: rgb(255 210 26 / .16);">
+          <span>Total work captured</span>
+          <strong>23,280 lb</strong>
+          <p>Loaded volume from weighted movements. Bodyweight work is tracked separately, not inflated.</p>
+        </article>
+        <article class="card metric-card" style="--glow: rgb(121 212 122 / .14);">
+          <span>Workout density</span>
+          <strong>3 / week</strong>
+          <p>Each seeded month has three workout dates in one week, enough to satisfy the default consistency target.</p>
+        </article>
+        <article class="card metric-card" style="--glow: rgb(103 183 255 / .12);">
+          <span>Best month</span>
+          <strong>6,720</strong>
+          <p>December won because Leg Press moved 120 x 10 and 130 x 8 across three sessions.</p>
+        </article>
+        <article class="card metric-card" style="--glow: rgb(255 159 67 / .14);">
+          <span>Workout span</span>
+          <strong>2025-10-03</strong>
+          <p>First logged date through 2026-04-24, with 21 completed workouts total.</p>
+        </article>
+      </div>
+
+      <article class="chart-card" id="volume">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Volume trend</p>
+            <h2>Month-by-month work output.</h2>
+            <p>The useful question is not “did I open the app?” It is whether the recorded work shows a direction.</p>
+          </div>
+          <span class="metric-chip">CSV field: volume</span>
+        </div>
+        <div class="chart" role="img" aria-label="Monthly volume chart from October 2025 to April 2026">
+          <div class="y-axis" aria-hidden="true"><span>7k</span><span>5k</span><span>3k</span><span>0</span></div>
+          <div class="bar-group"><i class="bar" style="--h: 36%;" data-volume="2,415"></i><strong>Oct 2025</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 33%;" data-volume="2,235"></i><strong>Nov 2025</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 100%;" data-volume="6,720"></i><strong>Dec 2025</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 58%;" data-volume="3,915"></i><strong>Jan 2026</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 21%;" data-volume="1,410"></i><strong>Feb 2026</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 60%;" data-volume="4,050"></i><strong>Mar 2026</strong></div>
+          <div class="bar-group"><i class="bar" style="--h: 38%;" data-volume="2,535"></i><strong>Apr 2026</strong></div>
+        </div>
+      </article>
+
+      <aside class="chart-card" id="exercises">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Exercise contribution</p>
+            <h2>Where the work came from.</h2>
+          </div>
+        </div>
+        <div class="exercise-list">
+          <div class="exercise-row"><strong>Leg Press</strong><span class="track"><i class="fill" style="--w: 100%;"></i></span><strong>10,770 lb</strong></div>
+          <div class="exercise-row"><strong>Lat Pulldown</strong><span class="track"><i class="fill" style="--w: 40%;"></i></span><strong>4,305 lb</strong></div>
+          <div class="exercise-row"><strong>Cable Triceps Pushdown</strong><span class="track"><i class="fill" style="--w: 29%;"></i></span><strong>3,150 lb</strong></div>
+          <div class="exercise-row"><strong>Incline Dumbbell Press</strong><span class="track"><i class="fill" style="--w: 25%;"></i></span><strong>2,715 lb</strong></div>
+          <div class="exercise-row"><strong>Dumbbell Shoulder Press</strong><span class="track"><i class="fill" style="--w: 14%;"></i></span><strong>1,470 lb</strong></div>
+        </div>
+      </aside>
+
+      <article class="chart-card" id="consistency">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Workout consistency</p>
+            <h2>Showing up is visible.</h2>
+            <p>The KAN-29 seed creates three workout dates per tracked month. This mirrors the app target that unlocks the first consistency badge.</p>
+          </div>
+          <span class="metric-chip">CSV field: workout_date</span>
+        </div>
+        <div class="calendar" aria-label="Tracked workout dates">
+          <div class="day active"><span>Oct</span><strong>03</strong></div><div class="day active"><span>Oct</span><strong>04</strong></div><div class="day active"><span>Oct</span><strong>05</strong></div>
+          <div class="day active"><span>Nov</span><strong>06</strong></div><div class="day active"><span>Nov</span><strong>07</strong></div><div class="day active"><span>Nov</span><strong>08</strong></div>
+          <div class="day active"><span>Dec</span><strong>10</strong></div><div class="day active"><span>Dec</span><strong>11</strong></div><div class="day active"><span>Dec</span><strong>12</strong></div>
+          <div class="day active"><span>Jan</span><strong>13</strong></div><div class="day active"><span>Jan</span><strong>14</strong></div><div class="day active"><span>Jan</span><strong>15</strong></div>
+          <div class="day active"><span>Feb</span><strong>16</strong></div><div class="day active"><span>Feb</span><strong>17</strong></div><div class="day active"><span>Feb</span><strong>18</strong></div>
+          <div class="day active"><span>Mar</span><strong>19</strong></div><div class="day active"><span>Mar</span><strong>20</strong></div><div class="day active"><span>Mar</span><strong>21</strong></div>
+          <div class="day active"><span>Apr</span><strong>22</strong></div><div class="day active"><span>Apr</span><strong>23</strong></div><div class="day active"><span>Apr</span><strong>24</strong></div>
+        </div>
+      </article>
+
+      <aside class="table-card">
+        <div class="panel-head">
+          <div>
+            <p class="panel-label">Rest discipline</p>
+            <h2>Rest tells you if the set was repeatable.</h2>
+          </div>
+        </div>
+        <div class="rows">
+          <div class="row"><span>Median rest between sets</span><strong>4:00</strong></div>
+          <div class="row"><span>Longest same-exercise gap</span><strong>8:00</strong></div>
+          <div class="row"><span>Export column</span><strong>rest_since_previous_set_seconds</strong></div>
+          <div class="row"><span>Practical read</span><strong>Controlled, not rushed</strong></div>
+        </div>
+      </aside>
+
+      <div class="insight-grid wide" id="verdict">
+        <article class="insight-card good">
+          <span class="metric-chip">Best lift trend</span>
+          <div>
+            <h3>Leg Press drove the block.</h3>
+            <p>10,770 lb of the 23,280 lb loaded volume came from Leg Press work. That is the clearest strength signal in this seed.</p>
+          </div>
+        </article>
+        <article class="insight-card info">
+          <span class="metric-chip">Training block verdict</span>
+          <div>
+            <h3>Useful tracking starts after repetition.</h3>
+            <p>One workout is a memory. 21 workouts produce patterns: best month, dominant lift, consistency, and rest behavior.</p>
+          </div>
+        </article>
+        <article class="insight-card warn">
+          <span class="metric-chip">Next useful action</span>
+          <div>
+            <h3>Balance the lower-body spike.</h3>
+            <p>December and March are leg-heavy. A real user could use this to plan the next block instead of guessing from memory.</p>
+          </div>
+        </article>
+      </div>
+
+      <article class="source-card wide">
+        <p class="eyebrow">Download CSV from the app</p>
+        <h2>Local data first. Dashboard second.</h2>
+        <p class="lead">This dashboard is intentionally grounded in exported local workout history, not a cloud account. The exact CSV fields used here are the same kind a user exports after tracking for weeks or months.</p>
+        <div class="chips" aria-label="CSV columns used">
+          <span class="chip">workout_date</span>
+          <span class="chip">logged_at</span>
+          <span class="chip">session_id</span>
+          <span class="chip">exercise</span>
+          <span class="chip">reps</span>
+          <span class="chip">weight</span>
+          <span class="chip">volume</span>
+          <span class="chip">rest_since_previous_set_seconds</span>
+        </div>
+        <div class="cta-row">
+          <a class="primary-cta" href="/">Back to product pitch</a>
+          <a class="btn" href="#volume">Review volume trend</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="shell">RepFast dashboard concept for repfast.pomeloapps.com/dashboard. Uses KAN-29 fake exported data: 2025-10-03 through 2026-04-24.</div>
+  </footer>
+</body>
+</html>

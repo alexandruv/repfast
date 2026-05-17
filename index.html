@@ -232,6 +232,7 @@
     .lead,
     .section-intro p:not(.eyebrow),
     .scenario-copy p:not(.eyebrow),
+    .dashboard-copy p:not(.eyebrow),
     .closing p:not(.eyebrow) {
       width: 100%;
       max-width: 690px;
@@ -253,6 +254,7 @@
     .hero-grid > *,
     .scenario > *,
     .screens > *,
+    .dashboard-layout > *,
     .roadmap-grid > * {
       min-width: 0;
     }
@@ -864,6 +866,203 @@
       background: linear-gradient(90deg, var(--yellow), var(--green));
     }
 
+
+
+    .dashboard {
+      position: relative;
+      border-top: 1px solid oklch(84% .17 92 / .26);
+      border-bottom: 1px solid oklch(84% .17 92 / .26);
+      background:
+        radial-gradient(circle at 16% 12%, oklch(84% .17 92 / .12), transparent 32%),
+        linear-gradient(135deg, oklch(21% .02 95 / .84), oklch(9% .012 95 / .96));
+    }
+
+    .dashboard-layout {
+      display: grid;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .dashboard-board {
+      display: grid;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid var(--line-hot);
+      border-radius: 22px;
+      background:
+        repeating-linear-gradient(135deg, transparent 0 16px, oklch(84% .17 92 / .045) 16px 17px),
+        oklch(9% .012 95 / .94);
+      box-shadow: var(--shadow);
+    }
+
+    .dashboard-topline,
+    .dashboard-panel-head,
+    .dashboard-table-row,
+    .dashboard-insight {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .dashboard-topline {
+      padding-bottom: 14px;
+      border-bottom: 1px solid oklch(84% .17 92 / .22);
+    }
+
+    .dashboard-topline strong,
+    .dashboard-panel-head strong,
+    .dashboard-insight strong {
+      text-transform: uppercase;
+    }
+
+    .dashboard-topline span,
+    .dashboard-panel-head span,
+    .dashboard-table-row span,
+    .dashboard-insight span,
+    .dashboard-fields code {
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 850;
+      text-transform: uppercase;
+    }
+
+    .dashboard-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .dashboard-metric,
+    .dashboard-chart,
+    .dashboard-fields,
+    .dashboard-insight {
+      border: 1px solid oklch(100% 0 0 / .08);
+      border-radius: var(--radius);
+      background: oklch(100% 0 0 / .035);
+    }
+
+    .dashboard-metric {
+      min-height: 112px;
+      padding: 14px;
+    }
+
+    .dashboard-metric strong {
+      display: block;
+      color: var(--text);
+      font-size: 2.25rem;
+      line-height: 1;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dashboard-metric span {
+      display: block;
+      margin-top: 8px;
+      color: var(--yellow);
+      font-size: 12px;
+      font-weight: 950;
+      text-transform: uppercase;
+    }
+
+    .dashboard-chart {
+      padding: 16px;
+    }
+
+    .dashboard-bars {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+      gap: 8px;
+      align-items: end;
+      min-height: 190px;
+      margin-top: 18px;
+    }
+
+    .dashboard-bar {
+      display: grid;
+      gap: 8px;
+      align-content: end;
+      min-height: 190px;
+    }
+
+    .dashboard-bar i {
+      display: block;
+      min-height: 36px;
+      height: var(--h);
+      border: 1px solid oklch(84% .17 92 / .4);
+      border-radius: var(--radius) var(--radius) 2px 2px;
+      background: linear-gradient(180deg, var(--yellow), oklch(77% .16 145));
+      box-shadow: 0 0 24px oklch(84% .17 92 / .12);
+    }
+
+    .dashboard-bar span {
+      color: var(--muted);
+      font-size: 11px;
+      font-weight: 900;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .dashboard-fields {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 12px;
+    }
+
+    .dashboard-fields code {
+      padding: 6px 8px;
+      border: 1px solid oklch(84% .17 92 / .18);
+      border-radius: var(--radius);
+      background: var(--ink);
+      color: var(--yellow);
+      font-family: inherit;
+      text-transform: none;
+    }
+
+    .dashboard-table {
+      display: grid;
+      gap: 0;
+      overflow: hidden;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: oklch(7% .01 95 / .72);
+    }
+
+    .dashboard-table-row {
+      min-height: 48px;
+      padding: 11px 12px;
+      border-bottom: 1px solid oklch(100% 0 0 / .07);
+    }
+
+    .dashboard-table-row:last-child {
+      border-bottom: 0;
+    }
+
+    .dashboard-table-row strong {
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dashboard-insights {
+      display: grid;
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .dashboard-insight {
+      min-height: 72px;
+      padding: 14px;
+    }
+
+    .dashboard-insight strong {
+      color: var(--yellow);
+    }
+
+    .dashboard-insight span {
+      color: var(--text);
+      text-align: right;
+      text-transform: none;
+    }
+
     .roadmap-item {
       display: grid;
       gap: 12px;
@@ -944,7 +1143,8 @@
       }
 
       .hero-grid,
-      .scenario {
+      .scenario,
+      .dashboard-layout {
         grid-template-columns: 1fr .9fr;
       }
 
@@ -1091,6 +1291,7 @@
       <div class="nav-links">
         <a href="#problem">Problem</a>
         <a href="#loop">Log loop</a>
+        <a href="/dashboard/">Dashboard</a>
         <a href="#v1">Screens</a>
         <a href="#roadmap">Roadmap</a>
       </div>
@@ -1160,6 +1361,7 @@
               </svg>
               Gym scenario
             </a>
+            <a class="btn secondary" href="#dashboard">Dashboard preview</a>
           </div>
         </div>
         <div class="hero-visual" aria-label="RepFast product visual">
@@ -1298,6 +1500,56 @@
       </div>
     </section>
 
+
+    <section class="dashboard" id="dashboard">
+      <div class="wrap dashboard-layout">
+        <div class="dashboard-copy">
+          <p class="eyebrow">CSV-powered progress dashboard</p>
+          <h2>See what actually changed after months of logged sets.</h2>
+          <p>Training effort becomes evidence once the KAN-29 export leaves the phone. The dashboard turns workout_date, exercise, volume, and rest_since_previous_set_seconds into a clean answer: what is improving, what is stable, and why the next session is worth logging.</p>
+          <div class="dashboard-insights" aria-label="Dashboard value statements">
+            <div class="dashboard-insight"><strong>Progress is no longer a feeling</strong><span>Bench volume is up 18% across the tracked block.</span></div>
+            <div class="dashboard-insight"><strong>Consistency becomes visible</strong><span>3 days/week shows the lifter kept showing up.</span></div>
+            <div class="dashboard-insight"><strong>Rest stops being guesswork</strong><span>Average rest trends explain why heavier sets moved better.</span></div>
+          </div>
+        </div>
+        <aside class="dashboard-board" aria-label="RepFast exported data dashboard preview">
+          <div class="dashboard-topline">
+            <div><strong>RepFast export preview</strong><span>Last 7 months</span></div>
+            <span class="tag">CSV import</span>
+          </div>
+          <div class="dashboard-metrics" aria-label="Export summary metrics">
+            <div class="dashboard-metric"><strong>21</strong><span>21 completed workouts</span></div>
+            <div class="dashboard-metric"><strong>84</strong><span>84 logged sets</span></div>
+            <div class="dashboard-metric"><strong>7</strong><span>7 months tracked</span></div>
+            <div class="dashboard-metric"><strong>3</strong><span>3 days/week</span></div>
+          </div>
+          <div class="dashboard-chart">
+            <div class="dashboard-panel-head"><strong>Volume by month</strong><span>from volume</span></div>
+            <div class="dashboard-bars" aria-label="Monthly volume chart">
+              <div class="dashboard-bar" style="--h: 52%;"><i></i><span>Oct</span></div>
+              <div class="dashboard-bar" style="--h: 58%;"><i></i><span>Nov</span></div>
+              <div class="dashboard-bar" style="--h: 63%;"><i></i><span>Dec</span></div>
+              <div class="dashboard-bar" style="--h: 69%;"><i></i><span>Jan</span></div>
+              <div class="dashboard-bar" style="--h: 74%;"><i></i><span>Feb</span></div>
+              <div class="dashboard-bar" style="--h: 82%;"><i></i><span>Mar</span></div>
+              <div class="dashboard-bar" style="--h: 91%;"><i></i><span>Apr</span></div>
+            </div>
+          </div>
+          <div class="dashboard-fields" aria-label="CSV fields used by the dashboard">
+            <code>workout_date</code>
+            <code>exercise</code>
+            <code>volume</code>
+            <code>rest_since_previous_set_seconds</code>
+          </div>
+          <div class="dashboard-table" aria-label="Dashboard highlights">
+            <div class="dashboard-table-row"><span>Best trend</span><strong>Bench Press +18%</strong></div>
+            <div class="dashboard-table-row"><span>Most consistent lift</span><strong>Rows, 7/7 months</strong></div>
+            <div class="dashboard-table-row"><span>Rest average</span><strong>2:14</strong></div>
+          </div>
+        </aside>
+      </div>
+    </section>
     <section id="v1">
       <div class="wrap">
         <div class="section-intro">
